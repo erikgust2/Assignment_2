@@ -5,6 +5,7 @@ class Team{
     Tank[] tanks;
 
     KnownWorld teamKnownWorld;
+    Logic teamLogic;
 
     Team(color _color, int[] _homebase){
         this.teamColor = _color;
@@ -15,6 +16,10 @@ class Team{
 
     void updateLogic(){
 
+    }
+
+    void init(){
+        
     }
 
 

@@ -41,7 +41,7 @@ Team redTeam;
 Team blueTeam;
 
 int[] redHomebase = {0,0,2,5};
-int[] blueHomebase = {13,9,15,15};
+int[] blueHomebase = {13,9,16,16};
 
 Tree tree1;
 Tree tree2;
@@ -74,6 +74,8 @@ public void setup() {
     tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
+    blueTeam.init();
+
     tree1 = new Tree(5, 12);
     tree2 = new Tree(6, 5);
     tree3 = new Tree(11, 10);
@@ -93,6 +95,9 @@ public void draw() {
     }
     
     background(255);
+
+    redTeam.updateLogic();
+    blueTeam.updateLogic();
     
     for(Tank tank : tanks) {
         tank.update();
@@ -106,7 +111,7 @@ public void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamKnownWorld.draw(); //<>//
+    blueTeam.teamLogic.knownWorld.draw(); //<>//
 }
 
 public void drawGrid() {
@@ -121,7 +126,14 @@ public void drawGrid() {
     TODO:
 
     Assignment 2:
-    - 
+    - Steg 1:
+        - 2/3 Tanks delar på kön för att utforska världen
+    - Steg 2:
+        - En prioritetskö per tank där vikterna sätts baserat på distans till närmaste tank
+    - Steg 3:
+        - Skjuta, Ladda om, Ta skada, etc
+
+
     - TeamLogic
     - 3 different tanks
     - How do the tanks communicate?
@@ -139,10 +151,19 @@ class BlueTeam extends Team{
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+        this.teamLogic = new Logic(this);
     }
 
     public void updateLogic(){
         
+    }
+
+    public void init(){
+        for(int i = this.homebase[0]; i <= this.homebase[2]; i++){
+            for(int j = this.homebase[1]; j <= this.homebase[3]; j++){
+                teamLogic.addFrontierNodes(i, j);
+            }
+        }
     }
 
     class BlueTank extends Tank{
@@ -155,7 +176,50 @@ class BlueTeam extends Team{
     class BlueScoutTank extends Tank{
         BlueScoutTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
-            this.logic = new BlueLogic(this);
+            this.logic = new BlueScoutLogic(this);
+        }
+
+        public void update(){
+            teamLogic.knownWorld.nodes[x][y].visited = true;
+            teamLogic.update();
+            this.logic.update();
+        }
+
+        // Move the tank in a given direction
+        public void moveRight() {
+            if(!checkCollision(this.x + 1, this.y)) {
+                this.x += 1;
+                this.xCoord = x * 50;
+                this.rotation = 0;
+                teamLogic.addFrontierNodes(this.x, this.y);
+            }
+        }
+
+        public void moveLeft() {
+            if(!checkCollision(this.x - 1, this.y)) {
+                this.x -= 1;
+                this.xCoord = x * 50;
+                this.rotation = 180;
+                teamLogic.addFrontierNodes(this.x, this.y);
+            }
+        }
+
+        public void moveUp() {
+            if(!checkCollision(this.x, this.y - 1)) {
+                this.y -= 1;
+                this.yCoord = y * 50;
+                this.rotation = 270;
+                teamLogic.addFrontierNodes(this.x, this.y);
+            }
+        }
+
+        public void moveDown() {
+            if(!checkCollision(this.x, this.y + 1)) {
+                this.y += 1;
+                this.yCoord = y * 50;
+                this.rotation = 90;
+                teamLogic.addFrontierNodes(this.x, this.y);
+            }
         }
     }
 
@@ -197,6 +261,34 @@ class BlueTeam extends Team{
                     this.tank.moveDown();
                 }
             }
+        }
+    }
+
+    class BlueScoutLogic extends BlueLogic{
+
+        BlueScoutLogic(Tank tank){
+            super(tank);
+        }
+
+        public Node getTarget(){
+            if(!teamLogic.frontier.isEmpty()){
+                do {
+                    target = teamLogic.frontier.remove(0);
+                } while (target.obstacle);
+                if(target.visited == true){
+                    target = this.getTarget();
+                }
+                if(target == null){
+                    hasTarget = false;
+                    stateMachine.changeState(tankIdleState);
+                    return null;
+                }
+                println("Target: " + target.x + ", " + target.y);
+                hasTarget = true;
+                return target;
+            }
+            hasTarget = false;
+            return null;
         }
     }
 }
@@ -390,6 +482,9 @@ class Logic {
     // The tank that this logic is controlling.
     Tank tank;
 
+    // The team that this logic is controlling
+    Team team;
+
     // Object that contains the known world.
     KnownWorld knownWorld;
 
@@ -418,6 +513,13 @@ class Logic {
         this.stateMachine = new StateMachine(tankWanderState, this);
         this.visited = new ArrayList<Node>();
         this.frontier = new ArrayList<Node>(); 
+    }
+
+    Logic (Team team){
+        this.team = team;
+        this.knownWorld = new KnownWorld(team);
+        this.visited = new ArrayList<Node>();
+        this.frontier = new ArrayList<Node>();
     }
 
     // Called every tick of the simulation
@@ -1027,6 +1129,7 @@ class Team{
     Tank[] tanks;
 
     KnownWorld teamKnownWorld;
+    Logic teamLogic;
 
     Team(int _color, int[] _homebase){
         this.teamColor = _color;
@@ -1037,6 +1140,10 @@ class Team{
 
     public void updateLogic(){
 
+    }
+
+    public void init(){
+        
     }
 
 

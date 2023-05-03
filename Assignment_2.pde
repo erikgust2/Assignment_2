@@ -24,7 +24,7 @@ Team redTeam;
 Team blueTeam;
 
 int[] redHomebase = {0,0,2,5};
-int[] blueHomebase = {13,9,15,15};
+int[] blueHomebase = {13,9,16,16};
 
 Tree tree1;
 Tree tree2;
@@ -57,6 +57,8 @@ void setup() {
     tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
+    blueTeam.init();
+
     tree1 = new Tree(5, 12);
     tree2 = new Tree(6, 5);
     tree3 = new Tree(11, 10);
@@ -76,6 +78,9 @@ void draw() {
     }
     
     background(255);
+
+    redTeam.updateLogic();
+    blueTeam.updateLogic();
     
     for(Tank tank : tanks) {
         tank.update();
@@ -89,7 +94,7 @@ void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamKnownWorld.draw(); //<>//
+    blueTeam.teamLogic.knownWorld.draw(); //<>//
 }
 
 void drawGrid() {
@@ -111,7 +116,7 @@ void drawGrid() {
     - Steg 3:
         - Skjuta, Ladda om, Ta skada, etc
 
-        
+
     - TeamLogic
     - 3 different tanks
     - How do the tanks communicate?

@@ -14,6 +14,9 @@ class Logic {
     // The tank that this logic is controlling.
     Tank tank;
 
+    // The team that this logic is controlling
+    Team team;
+
     // Object that contains the known world.
     KnownWorld knownWorld;
 
@@ -42,6 +45,13 @@ class Logic {
         this.stateMachine = new StateMachine(tankWanderState, this);
         this.visited = new ArrayList<Node>();
         this.frontier = new ArrayList<Node>(); 
+    }
+
+    Logic (Team team){
+        this.team = team;
+        this.knownWorld = new KnownWorld(team);
+        this.visited = new ArrayList<Node>();
+        this.frontier = new ArrayList<Node>();
     }
 
     // Called every tick of the simulation
