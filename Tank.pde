@@ -10,11 +10,6 @@
  * It contains the logic for drawing the tanks and moving them around the map.
  */
 
-// Enum for the two teams
-enum Team {
-    PACT, NATO
-}
-
 class Tank {
     // Coordinates of the tank on the game board
     int x, y;
@@ -46,7 +41,7 @@ class Tank {
         xCoord = x * 50;
         yCoord = y * 50;
 
-        if(team == Team.PACT) {
+        if(this.team == redTeam) {
             rotation = 0;
         } else {
             rotation = 180;
@@ -133,7 +128,7 @@ class Tank {
     void draw() {
         stroke(0);
         strokeWeight(2);
-        if (team == Team.PACT) {
+        if (team == redTeam) {
             fill(255, 0, 0);
         } else {
             fill(0, 0, 255);

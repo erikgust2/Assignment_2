@@ -53,29 +53,29 @@ class Node {
     // Method that draws the node on the board.
     // Draws it in different colors depending on the type of node.
     // If the node has been explored or visited it will also have a circle drawn on it for debugging purposes.
-    void draw() {
+    void draw(color _teamcolor) {
         if(!explored) {
-        strokeWeight(1);
-        if (type == CellType.TREE) {
-            fill(treeColor, 50);
-        } else if (type == CellType.NATO) {
-            fill(natoColor, 80);
-        } else if (type == CellType.PACT) {
-            fill(pactColor, 90);
-        } else if (type == CellType.EMPTY) {
-            fill(exploredColor, 50);
-        } else {
-            fill(emptyColor, 50);
-        }
-        rect(x * cellSize, y * cellSize, cellSize, cellSize);
+            strokeWeight(1);
+            if (type == CellType.TREE) {
+                fill(treeColor, 50);
+            } else if (type == CellType.NATO) {
+                fill(natoColor, 80);
+            } else if (type == CellType.PACT) {
+                fill(pactColor, 90);
+            } else if (type == CellType.EMPTY) {
+                fill(exploredColor, 50);
+            } else {
+                fill(emptyColor, 50);
+            }
+            rect(x * cellSize, y * cellSize, cellSize, cellSize);
         } else {
             if(visited){
-                fill(0,0,255);
+                fill(_teamcolor);
             }else if(explored){
-                fill(0, 255 , 0);
+                fill(0, 255 , 0, 120);
             }
             if(obstacle){
-                fill(255, 0, 0);
+                fill(0, 0, 0, 120);
             }
             
             ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);

@@ -14,7 +14,7 @@ boolean keyUP, keyDOWN, keyLEFT, keyRIGHT = false;
 
 // Handles the pressing of keys.
 void keyPressed() {
-    if (key == CODED && red_tank1.userControl) {
+    if (key == CODED && tanks[0].userControl) {
         switch (keyCode) {
             case UP:
                 keyUP = true;
@@ -34,23 +34,23 @@ void keyPressed() {
 
 // Handles the release of keys, and thus movement of the tank.
 void keyReleased() {
-    if (key == CODED && red_tank1.userControl) {
+    if (key == CODED && tanks[0].userControl) {
         switch (keyCode) {
             case UP:
                 keyUP = false;
-                red_tank1.moveUp();
+                tanks[0].moveUp();
                 break;
             case DOWN:
                 keyDOWN = false;
-                red_tank1.moveDown();
+                tanks[0].moveDown();
                 break;
             case LEFT:
                 keyLEFT = false;
-                red_tank1.moveLeft();
+                tanks[0].moveLeft();
                 break;
             case RIGHT:
                 keyRIGHT = false;
-                red_tank1.moveRight();
+                tanks[0].moveRight();
                 break;
         }
     }

@@ -14,10 +14,6 @@ class Logic {
     // The tank that this logic is controlling.
     Tank tank;
 
-    // Flags to indicate if the tank has a target and a path to the target.
-    boolean hasTarget = false;
-    boolean hasPath = false;
-
     // Object that contains the known world.
     KnownWorld knownWorld;
 
@@ -31,6 +27,10 @@ class Logic {
     Node target;
     ArrayList<int[]> pathToTarget;
 
+    // Flags to indicate if the tank has a target and a path to the target.
+    boolean hasTarget = false;
+    boolean hasPath = false;
+
     // Data structures holding the visited and frontier (known, but not yet visited) nodes.
     ArrayList<Node> visited;
     ArrayList<Node> frontier;
@@ -38,46 +38,14 @@ class Logic {
     // Constructor.
     public Logic(Tank tank) {
         this.tank = tank;
-        visited = new ArrayList<Node>();
-        frontier = new ArrayList<Node>();
         this.knownWorld = new KnownWorld(new Node(tank.x, tank.y));
         this.stateMachine = new StateMachine(tankWanderState, this);
+        this.visited = new ArrayList<Node>();
+        this.frontier = new ArrayList<Node>(); 
     }
 
     // Called every tick of the simulation
     void update(){
-
-        if(stateMachine.currentState == tankRetreatState){
-            if(pathToTarget.size() == 0){
-                hasPath = false;
-                hasTarget = false;
-                stateMachine.changeState(tankReportState);
-            }
-        }else if(stateMachine.currentState == tankReportState){
-            if(timer.getElapsedTime() >= logicTimer){
-                stateMachine.changeState(tankWanderState);
-            }
-        }
-
-        stateMachine.update();
-
-        if(hasPath && hasTarget){
-            int[] node = pathToTarget.get(0);
-
-            if(node[0] == tank.x
-            && node[1] == tank.y){
-                pathToTarget.remove(node);
-            }
-            if(node[0] < tank.x){
-                tank.moveLeft();
-            }else if(node[0] > tank.x){
-                tank.moveRight();
-            }else if(node[1] < tank.y){
-                tank.moveUp();
-            }else if(node[1] > tank.y){
-                tank.moveDown();
-            }
-        }
 
     }
 

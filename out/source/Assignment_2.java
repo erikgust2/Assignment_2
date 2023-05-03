@@ -32,17 +32,16 @@ int gridSize = 16;
 Node gameBoard[][] = new Node[gridSize][gridSize];
 
 int treeColor = color(0, 128, 0);
-int natoColor = color(0, 0, 255);
-int pactColor = color(255, 0, 0);
+int natoColor = color(0, 0, 255, 120);
+int pactColor = color(255, 0, 0, 120);
 int exploredColor = color(128, 128, 128);
 int emptyColor = color(0,0,0);
 
-Tank red_tank1;
-Tank red_tank2;
-Tank red_tank3;
-Tank blue_tank1;
-Tank blue_tank2;
-Tank blue_tank3;
+Team redTeam;
+Team blueTeam;
+
+int[] redHomebase = {0,0,2,5};
+int[] blueHomebase = {13,9,15,15};
 
 Tree tree1;
 Tree tree2;
@@ -62,32 +61,32 @@ public void setup() {
 
     timer = new Timer();
 
-    red_tank1 = new Tank(1, 1, Team.PACT);
-    red_tank1.userControl = true;
-    red_tank2 = new Tank(1, 3, Team.PACT);
-    red_tank3 = new Tank(1, 5, Team.PACT);
-    blue_tank1 = new Tank(14, 10, Team.NATO);
-    blue_tank2 = new Tank(14, 12, Team.NATO);
-    blue_tank3 = new Tank(14, 14, Team.NATO);
+    redTeam = new RedTeam(pactColor, redHomebase);
+    blueTeam = new BlueTeam(natoColor, blueHomebase);
 
-    tanks[0] = red_tank1;
-    tanks[1] = red_tank2;
-    tanks[2] = red_tank3;
-    tanks[3] = blue_tank1;
-    tanks[4] = blue_tank2;
-    tanks[5] = blue_tank3;
+    //redTeam.tanks[0].userControl = true;
+    //blueTeam.tanks[0].userControl = true;
+
+    tanks[0] = redTeam.tanks[0];
+    tanks[1] = redTeam.tanks[1];
+    tanks[2] = redTeam.tanks[2];
+    tanks[3] = blueTeam.tanks[0];
+    tanks[4] = blueTeam.tanks[1];
+    tanks[5] = blueTeam.tanks[2];
 
     tree1 = new Tree(5, 12);
     tree2 = new Tree(6, 5);
     tree3 = new Tree(11, 10);
 
     setGameBoard();
-    red_tank1.logic.addFrontierNodes(red_tank1.x, red_tank1.y);
+    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
 public void draw() {
     timer.tick();
-    if(red_tank1.logic.stateMachine.currentState != tankRetreatState){
+    if(tanks[0].logic.stateMachine.currentState != tankRetreatState
+    || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
     }else{
         delay(50);
@@ -105,13 +104,98 @@ public void draw() {
     tree3.draw();
 
     drawGrid();
-    red_tank1.logic.knownWorld.draw();
+    //tanks[0].logic.knownWorld.draw(pactColor);
+    //tanks[3].logic.knownWorld.draw(natoColor);
+    blueTeam.teamKnownWorld.draw();
 }
 
 public void drawGrid() {
     for(int i = 0; i < gridSize; i++) {
         for(int j = 0; j < gridSize; j++) {
-            gameBoard[i][j].draw();
+            gameBoard[i][j].draw(color(0,0,0));
+        }
+    }
+}
+
+/*
+    TODO:
+
+    - TeamLogic
+    - 3 different tanks
+    - How do the tanks communicate?
+    - Split actions into different timings?
+    - Chess?
+    - Shitty terrain
+    - 
+*/
+class BlueTeam extends Team{
+
+    KnownWorld teamKnownWorld;
+
+    BlueTeam(int _color, int[] _homebase){
+        super(_color, _homebase);
+        this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
+        this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
+        this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+        this.teamKnownWorld = new KnownWorld(this);
+    }
+
+    public void updateLogic(){
+        
+    }
+
+    class BlueTank extends Tank{
+        BlueTank(int _x, int _y, Team _team){
+            super(_x, _y, _team);
+            this.logic = new BlueLogic(this);
+        }
+    }
+
+    class BlueScoutTank extends Tank{
+        BlueScoutTank(int _x, int _y, Team _team){
+            super(_x, _y, _team);
+            this.logic = new BlueLogic(this);
+        }
+    }
+
+    class BlueLogic extends Logic{
+
+        BlueLogic(Tank tank){
+            super(tank);
+        }
+
+        public void update(){
+            if(this.stateMachine.currentState == tankRetreatState){
+                if(this.pathToTarget.size() == 0){
+                    this.hasPath = false;
+                    this.hasTarget = false;
+                    this.stateMachine.changeState(tankReportState);
+                }
+            }else if(this.stateMachine.currentState == tankReportState){
+                if(timer.getElapsedTime() >= this.logicTimer){
+                    this.stateMachine.changeState(tankWanderState);
+                }
+            }
+
+            this.stateMachine.update();
+
+            if(this.hasPath && this.hasTarget){
+                int[] node = this.pathToTarget.get(0);
+
+                if(node[0] == this.tank.x
+                && node[1] == this.tank.y){
+                    this.pathToTarget.remove(node);
+                }
+                if(node[0] < this.tank.x){
+                    this.tank.moveLeft();
+                }else if(node[0] > this.tank.x){
+                    this.tank.moveRight();
+                }else if(node[1] < this.tank.y){
+                    this.tank.moveUp();
+                }else if(node[1] > this.tank.y){
+                    this.tank.moveDown();
+                }
+            }
         }
     }
 }
@@ -180,7 +264,7 @@ boolean keyUP, keyDOWN, keyLEFT, keyRIGHT = false;
 
 // Handles the pressing of keys.
 public void keyPressed() {
-    if (key == CODED && red_tank1.userControl) {
+    if (key == CODED && tanks[0].userControl) {
         switch (keyCode) {
             case UP:
                 keyUP = true;
@@ -200,23 +284,23 @@ public void keyPressed() {
 
 // Handles the release of keys, and thus movement of the tank.
 public void keyReleased() {
-    if (key == CODED && red_tank1.userControl) {
+    if (key == CODED && tanks[0].userControl) {
         switch (keyCode) {
             case UP:
                 keyUP = false;
-                red_tank1.moveUp();
+                tanks[0].moveUp();
                 break;
             case DOWN:
                 keyDOWN = false;
-                red_tank1.moveDown();
+                tanks[0].moveDown();
                 break;
             case LEFT:
                 keyLEFT = false;
-                red_tank1.moveLeft();
+                tanks[0].moveLeft();
                 break;
             case RIGHT:
                 keyRIGHT = false;
-                red_tank1.moveRight();
+                tanks[0].moveRight();
                 break;
         }
     }
@@ -241,11 +325,20 @@ class KnownWorld {
     // The node that the tank starts in.
     Node startNode;
 
+    // The team
+    Team team;
+
     // Constructor
     KnownWorld(Node startNode) {
         nodes = new Node[16][16];
         this.startNode = startNode;
         addNode(startNode);
+    }
+
+    KnownWorld(Team _team){
+        this.team = _team;
+        nodes = new Node[16][16];
+        addBaseNodes(_team);
     }
 
     // Adds a node to the known world.
@@ -256,12 +349,25 @@ class KnownWorld {
         }
     }
 
+    public void addBaseNodes(Team team){
+        for(int i = team.homebase[0]; i < team.homebase[2]; i++){
+            for(int j = team.homebase[1]; j < team.homebase[3]; j++){
+                if(team == redTeam){
+                    nodes[i][j] = new Node(CellType.PACT, i, j);
+                }else{
+                    nodes[i][j] = new Node(CellType.NATO, i, j);
+                }
+                
+            }
+        }
+    }
+
     // Draws the known world (for debugging)
     public void draw() {
         for(int i = 0; i < nodes.length; i++) {
             for(int j = 0; j < nodes[i].length; j++) {
                 if(nodes[i][j] != null) {
-                    nodes[i][j].draw();
+                    nodes[i][j].draw(this.team.teamColor);
                 }
             }
         }
@@ -283,10 +389,6 @@ class Logic {
     // The tank that this logic is controlling.
     Tank tank;
 
-    // Flags to indicate if the tank has a target and a path to the target.
-    boolean hasTarget = false;
-    boolean hasPath = false;
-
     // Object that contains the known world.
     KnownWorld knownWorld;
 
@@ -300,6 +402,10 @@ class Logic {
     Node target;
     ArrayList<int[]> pathToTarget;
 
+    // Flags to indicate if the tank has a target and a path to the target.
+    boolean hasTarget = false;
+    boolean hasPath = false;
+
     // Data structures holding the visited and frontier (known, but not yet visited) nodes.
     ArrayList<Node> visited;
     ArrayList<Node> frontier;
@@ -307,46 +413,14 @@ class Logic {
     // Constructor.
     public Logic(Tank tank) {
         this.tank = tank;
-        visited = new ArrayList<Node>();
-        frontier = new ArrayList<Node>();
         this.knownWorld = new KnownWorld(new Node(tank.x, tank.y));
         this.stateMachine = new StateMachine(tankWanderState, this);
+        this.visited = new ArrayList<Node>();
+        this.frontier = new ArrayList<Node>(); 
     }
 
     // Called every tick of the simulation
     public void update(){
-
-        if(stateMachine.currentState == tankRetreatState){
-            if(pathToTarget.size() == 0){
-                hasPath = false;
-                hasTarget = false;
-                stateMachine.changeState(tankReportState);
-            }
-        }else if(stateMachine.currentState == tankReportState){
-            if(timer.getElapsedTime() >= logicTimer){
-                stateMachine.changeState(tankWanderState);
-            }
-        }
-
-        stateMachine.update();
-
-        if(hasPath && hasTarget){
-            int[] node = pathToTarget.get(0);
-
-            if(node[0] == tank.x
-            && node[1] == tank.y){
-                pathToTarget.remove(node);
-            }
-            if(node[0] < tank.x){
-                tank.moveLeft();
-            }else if(node[0] > tank.x){
-                tank.moveRight();
-            }else if(node[1] < tank.y){
-                tank.moveUp();
-            }else if(node[1] > tank.y){
-                tank.moveDown();
-            }
-        }
 
     }
 
@@ -566,32 +640,92 @@ class Node {
     // Method that draws the node on the board.
     // Draws it in different colors depending on the type of node.
     // If the node has been explored or visited it will also have a circle drawn on it for debugging purposes.
-    public void draw() {
+    public void draw(int _teamcolor) {
         if(!explored) {
-        strokeWeight(1);
-        if (type == CellType.TREE) {
-            fill(treeColor, 50);
-        } else if (type == CellType.NATO) {
-            fill(natoColor, 80);
-        } else if (type == CellType.PACT) {
-            fill(pactColor, 90);
-        } else if (type == CellType.EMPTY) {
-            fill(exploredColor, 50);
-        } else {
-            fill(emptyColor, 50);
-        }
-        rect(x * cellSize, y * cellSize, cellSize, cellSize);
+            strokeWeight(1);
+            if (type == CellType.TREE) {
+                fill(treeColor, 50);
+            } else if (type == CellType.NATO) {
+                fill(natoColor, 80);
+            } else if (type == CellType.PACT) {
+                fill(pactColor, 90);
+            } else if (type == CellType.EMPTY) {
+                fill(exploredColor, 50);
+            } else {
+                fill(emptyColor, 50);
+            }
+            rect(x * cellSize, y * cellSize, cellSize, cellSize);
         } else {
             if(visited){
-                fill(0,0,255);
+                fill(_teamcolor);
             }else if(explored){
-                fill(0, 255 , 0);
+                fill(0, 255 , 0, 120);
             }
             if(obstacle){
-                fill(255, 0, 0);
+                fill(0, 0, 0, 120);
             }
             
             ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
+        }
+    }
+}
+class RedTeam extends Team{
+    RedTeam(int _color, int[] _homebase){
+        super(_color, _homebase);
+        this.tanks[0] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
+        this.tanks[1] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
+        this.tanks[2] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+    }
+
+    public void updateLogic(){
+
+    }
+
+    class RedTank extends Tank{
+        RedTank(int _x, int _y, Team _team){
+            super(_x, _y, _team);
+            this.logic = new RedLogic(this);
+        }
+    }
+
+    class RedLogic extends Logic{
+
+        RedLogic(Tank tank){
+            super(tank);
+        }
+
+        public void update(){
+            if(this.stateMachine.currentState == tankRetreatState){
+                if(this.pathToTarget.size() == 0){
+                    this.hasPath = false;
+                    this.hasTarget = false;
+                    this.stateMachine.changeState(tankReportState);
+                }
+            }else if(this.stateMachine.currentState == tankReportState){
+                if(timer.getElapsedTime() >= this.logicTimer){
+                    this.stateMachine.changeState(tankWanderState);
+                }
+            }
+
+            this.stateMachine.update();
+
+            if(this.hasPath && this.hasTarget){
+                int[] node = this.pathToTarget.get(0);
+
+                if(node[0] == this.tank.x
+                && node[1] == this.tank.y){
+                    this.pathToTarget.remove(node);
+                }
+                if(node[0] < this.tank.x){
+                    this.tank.moveLeft();
+                }else if(node[0] > this.tank.x){
+                    this.tank.moveRight();
+                }else if(node[1] < this.tank.y){
+                    this.tank.moveUp();
+                }else if(node[1] > this.tank.y){
+                    this.tank.moveDown();
+                }
+            }
         }
     }
 }
@@ -755,11 +889,6 @@ ReportState tankReportState = new ReportState();
  * It contains the logic for drawing the tanks and moving them around the map.
  */
 
-// Enum for the two teams
-enum Team {
-    PACT, NATO
-}
-
 class Tank {
     // Coordinates of the tank on the game board
     int x, y;
@@ -791,7 +920,7 @@ class Tank {
         xCoord = x * 50;
         yCoord = y * 50;
 
-        if(team == Team.PACT) {
+        if(this.team == redTeam) {
             rotation = 0;
         } else {
             rotation = 180;
@@ -878,7 +1007,7 @@ class Tank {
     public void draw() {
         stroke(0);
         strokeWeight(2);
-        if (team == Team.PACT) {
+        if (team == redTeam) {
             fill(255, 0, 0);
         } else {
             fill(0, 0, 255);
@@ -889,6 +1018,27 @@ class Tank {
         line(xCoord + 25, yCoord + 25, xCoord + 25 + cos(radians(this.rotation)) * 25, yCoord + 25 + sin(radians(this.rotation)) * 25);
     }
     
+}
+class Team{
+
+    int teamColor;
+    int[] homebase;
+    Tank[] tanks;
+
+    KnownWorld teamKnownWorld;
+
+    Team(int _color, int[] _homebase){
+        this.teamColor = _color;
+        this.homebase = _homebase;
+        this.tanks = new Tank[3];
+    }
+
+    public void updateLogic(){
+
+    }
+
+
+
 }
 /* 
  * Authors:

@@ -15,17 +15,16 @@ int gridSize = 16;
 Node gameBoard[][] = new Node[gridSize][gridSize];
 
 color treeColor = color(0, 128, 0);
-color natoColor = color(0, 0, 255);
-color pactColor = color(255, 0, 0);
+color natoColor = color(0, 0, 255, 120);
+color pactColor = color(255, 0, 0, 120);
 color exploredColor = color(128, 128, 128);
 color emptyColor = color(0,0,0);
 
-Tank red_tank1;
-Tank red_tank2;
-Tank red_tank3;
-Tank blue_tank1;
-Tank blue_tank2;
-Tank blue_tank3;
+Team redTeam;
+Team blueTeam;
+
+int[] redHomebase = {0,0,2,5};
+int[] blueHomebase = {13,9,15,15};
 
 Tree tree1;
 Tree tree2;
@@ -45,32 +44,32 @@ void setup() {
 
     timer = new Timer();
 
-    red_tank1 = new Tank(1, 1, Team.PACT);
-    red_tank1.userControl = true;
-    red_tank2 = new Tank(1, 3, Team.PACT);
-    red_tank3 = new Tank(1, 5, Team.PACT);
-    blue_tank1 = new Tank(14, 10, Team.NATO);
-    blue_tank2 = new Tank(14, 12, Team.NATO);
-    blue_tank3 = new Tank(14, 14, Team.NATO);
+    redTeam = new RedTeam(pactColor, redHomebase);
+    blueTeam = new BlueTeam(natoColor, blueHomebase);
 
-    tanks[0] = red_tank1;
-    tanks[1] = red_tank2;
-    tanks[2] = red_tank3;
-    tanks[3] = blue_tank1;
-    tanks[4] = blue_tank2;
-    tanks[5] = blue_tank3;
+    //redTeam.tanks[0].userControl = true;
+    //blueTeam.tanks[0].userControl = true;
+
+    tanks[0] = redTeam.tanks[0];
+    tanks[1] = redTeam.tanks[1];
+    tanks[2] = redTeam.tanks[2];
+    tanks[3] = blueTeam.tanks[0];
+    tanks[4] = blueTeam.tanks[1];
+    tanks[5] = blueTeam.tanks[2];
 
     tree1 = new Tree(5, 12);
     tree2 = new Tree(6, 5);
     tree3 = new Tree(11, 10);
 
     setGameBoard();
-    red_tank1.logic.addFrontierNodes(red_tank1.x, red_tank1.y);
+    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
 void draw() {
     timer.tick();
-    if(red_tank1.logic.stateMachine.currentState != tankRetreatState){
+    if(tanks[0].logic.stateMachine.currentState != tankRetreatState
+    || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
     }else{
         delay(50);
@@ -88,13 +87,27 @@ void draw() {
     tree3.draw();
 
     drawGrid();
-    red_tank1.logic.knownWorld.draw();
+    //tanks[0].logic.knownWorld.draw(pactColor);
+    //tanks[3].logic.knownWorld.draw(natoColor);
+    blueTeam.teamKnownWorld.draw();
 }
 
 void drawGrid() {
     for(int i = 0; i < gridSize; i++) {
         for(int j = 0; j < gridSize; j++) {
-            gameBoard[i][j].draw();
+            gameBoard[i][j].draw(color(0,0,0));
         }
     }
 }
+
+/*
+    TODO:
+
+    - TeamLogic
+    - 3 different tanks
+    - How do the tanks communicate?
+    - Split actions into different timings?
+    - Chess?
+    - Shitty terrain
+    - 
+*/
