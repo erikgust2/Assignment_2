@@ -10,6 +10,7 @@ class Team{
         this.teamColor = _color;
         this.homebase = _homebase;
         this.tanks = new Tank[3];
+        this.teamKnownWorld = new KnownWorld(this);
     }
 
     void updateLogic(){

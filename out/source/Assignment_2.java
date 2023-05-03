@@ -106,7 +106,7 @@ public void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamKnownWorld.draw();
+    blueTeam.teamKnownWorld.draw(); //<>//
 }
 
 public void drawGrid() {
@@ -120,24 +120,25 @@ public void drawGrid() {
 /*
     TODO:
 
+    Assignment 2:
+    - 
     - TeamLogic
     - 3 different tanks
     - How do the tanks communicate?
     - Split actions into different timings?
     - Chess?
-    - Shitty terrain
     - 
+    
+    Assignment 3:
+    - Shitty terrain
 */
 class BlueTeam extends Team{
-
-    KnownWorld teamKnownWorld;
 
     BlueTeam(int _color, int[] _homebase){
         super(_color, _homebase);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
-        this.teamKnownWorld = new KnownWorld(this);
     }
 
     public void updateLogic(){
@@ -1031,6 +1032,7 @@ class Team{
         this.teamColor = _color;
         this.homebase = _homebase;
         this.tanks = new Tank[3];
+        this.teamKnownWorld = new KnownWorld(this);
     }
 
     public void updateLogic(){

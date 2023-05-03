@@ -89,7 +89,7 @@ void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamKnownWorld.draw();
+    blueTeam.teamKnownWorld.draw(); //<>//
 }
 
 void drawGrid() {
@@ -103,11 +103,22 @@ void drawGrid() {
 /*
     TODO:
 
+    Assignment 2:
+    - Steg 1:
+        - 2/3 Tanks delar på kön för att utforska världen
+    - Steg 2:
+        - En prioritetskö per tank där vikterna sätts baserat på distans till närmaste tank
+    - Steg 3:
+        - Skjuta, Ladda om, Ta skada, etc
+
+        
     - TeamLogic
     - 3 different tanks
     - How do the tanks communicate?
     - Split actions into different timings?
     - Chess?
-    - Shitty terrain
     - 
+    
+    Assignment 3:
+    - Shitty terrain
 */

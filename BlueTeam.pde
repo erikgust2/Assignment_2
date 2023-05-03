@@ -1,13 +1,10 @@
 class BlueTeam extends Team{
 
-    KnownWorld teamKnownWorld;
-
     BlueTeam(color _color, int[] _homebase){
         super(_color, _homebase);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
-        this.teamKnownWorld = new KnownWorld(this);
     }
 
     void updateLogic(){
