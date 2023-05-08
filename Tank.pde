@@ -25,7 +25,7 @@ class Tank {
     Team team;
 
     // Instance of the logic class which is used for the AI
-    Logic logic;
+    TankLogic logic;
 
     // Boolean for if the tank is controlled by the user or AI
     boolean userControl;
@@ -47,7 +47,7 @@ class Tank {
             rotation = 180;
         }
 
-        this.logic = new Logic(this);
+        this.logic = new TankLogic(this);
     }
 
     // Run every frame to update the tank's state
