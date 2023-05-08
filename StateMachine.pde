@@ -141,8 +141,43 @@ class IdleState extends State{
     }
 }
 
+// State representing the exploring of the map.
+class ScoutWanderState extends State {
+
+    String name = "ScoutWanderState";
+
+    void onEnter(Logic logic) {
+        println("ScoutWanderState onEnter");
+    }
+
+    void onExit(Logic logic) {
+        println("ScoutWanderState onExit");
+    }
+
+    void execute(Logic logic) {
+        //println("WanderState execute");
+
+        if(!logic.hasTarget) {
+            logic.getTarget();
+        }
+        if(logic.hasTarget){
+            if(!logic.hasPath){
+                logic.getPath();
+            }
+            if(logic.pathToTarget.size() == 0){
+                logic.hasPath = false;
+                logic.hasTarget = false;
+            }
+        }
+        
+
+    }
+
+}
+
 // Instances of the different tank states for use in the state machine
 WanderState tankWanderState = new WanderState();
 RetreatState tankRetreatState = new RetreatState();
 IdleState tankIdleState = new IdleState();
 ReportState tankReportState = new ReportState();
+ScoutWanderState scoutTankWanderState = new ScoutWanderState();

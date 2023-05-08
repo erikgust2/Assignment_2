@@ -88,6 +88,10 @@ class Logic {
         pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
         hasPath = true;
     }
+    void getTeamPath(){
+        pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
+        hasPath = true;
+    }
 
     // Adds the nodes adjacent to the current node to the frontier.
     void addFrontierNodes(int x, int y){
@@ -172,7 +176,7 @@ class Logic {
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
-                int u = minDistance(dist, visited);
+                int u = minDistance(dist, visited); //<>//
                 println(u % size + ", " + u / size);
                 visited[u] = true;
 

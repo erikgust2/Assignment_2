@@ -24,7 +24,7 @@ Team redTeam;
 Team blueTeam;
 
 int[] redHomebase = {0,0,2,5};
-int[] blueHomebase = {13,9,16,16};
+int[] blueHomebase = {13,9,15,15};
 
 Tree tree1;
 Tree tree2;
