@@ -83,7 +83,6 @@ void draw() {
     blueTeam.updateLogic();
     
     for(Tank tank : tanks) {
-        tank.update();
         tank.draw();
     }
 

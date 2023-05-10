@@ -2,25 +2,25 @@ class BlueTeam extends Team{
 
     BlueTeam(color _color, int[] _homebase){
         super(_color, _homebase);
-        this.teamLogic = new Logic(this);
+        this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new BlueScoutTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
     }
 
     void updateLogic(){
-        
+       this.teamLogic.update(); 
     }
 
     void init(){
-        for(int i = this.homebase[0]; i <= this.homebase[2]; i++){
-            for(int j = this.homebase[1]; j <= this.homebase[3]; j++){
-                Node toAdd = new Node(i,j);
-                toAdd.visited = true;
-                teamLogic.knownWorld.addNode(toAdd);
-                teamLogic.addFrontierNodes(i, j); //<>//
-            }
-        }
+        // for(int i = this.homebase[0]; i <= this.homebase[2]; i++){
+        //     for(int j = this.homebase[1]; j <= this.homebase[3]; j++){
+        //         Node toAdd = new Node(i,j);
+        //         toAdd.visited = true;
+        //         teamLogic.knownWorld.addNode(toAdd);
+        //         teamLogic.addFrontierNodes(i, j); //<>//
+        //     }
+        // }
     }
 
     class BlueTank extends Tank{
@@ -34,7 +34,7 @@ class BlueTeam extends Team{
         BlueScoutTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
             this.logic = new BlueScoutLogic(this);
-            this.logic.stateMachine = new StateMachine(scoutTankWanderState, teamLogic);
+            //this.logic.stateMachine = new StateMachine(scoutTankWanderState, teamLogic);
         }
 
         void update(){
@@ -48,7 +48,7 @@ class BlueTeam extends Team{
                 this.x += 1;
                 this.xCoord = x * 50;
                 this.rotation = 0;
-                teamLogic.addFrontierNodes(this.x, this.y);
+                //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
 
@@ -57,7 +57,7 @@ class BlueTeam extends Team{
                 this.x -= 1;
                 this.xCoord = x * 50;
                 this.rotation = 180;
-                teamLogic.addFrontierNodes(this.x, this.y);
+                //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
 
@@ -66,7 +66,7 @@ class BlueTeam extends Team{
                 this.y -= 1;
                 this.yCoord = y * 50;
                 this.rotation = 270;
-                teamLogic.addFrontierNodes(this.x, this.y);
+                //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
 
@@ -75,12 +75,12 @@ class BlueTeam extends Team{
                 this.y += 1;
                 this.yCoord = y * 50;
                 this.rotation = 90;
-                teamLogic.addFrontierNodes(this.x, this.y);
+                //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
     }
 
-    class BlueLogic extends Logic{
+    class BlueLogic extends TankLogic{
 
         BlueLogic(Tank tank){
             super(tank);

@@ -12,9 +12,9 @@
 
 class StateMachine {
     State currentState;
-    Logic logic;
+    TankLogic logic;
 
-    StateMachine(State start, Logic logic) {
+    StateMachine(State start, TankLogic logic) {
         this.currentState = start;
         this.logic = logic;
     }
@@ -36,8 +36,8 @@ class StateMachine {
 // Abstract class representing a state.
 class State{
 
-    void onEnter(Logic logic) {}
-    void onExit(Logic logic) {}
+    void onEnter(TankLogic logic) {}
+    void onExit(TankLogic logic) {}
     void execute(Logic logic) {}
     String toString() {return "";}
 }
@@ -47,7 +47,7 @@ class WanderState extends State {
 
     String name = "WanderState";
 
-    void onEnter(Logic logic) {
+    void onEnter(TankLogic logic) {
         println("WanderState onEnter");
         logic.knownWorld.nodes[logic.tank.x][logic.tank.y].visited = true;
         logic.visited.add(logic.knownWorld.nodes[logic.tank.x][logic.tank.y]);
@@ -55,11 +55,11 @@ class WanderState extends State {
         logic.addFrontierNodes(logic.tank.x, logic.tank.y);
     }
 
-    void onExit(Logic logic) {
+    void onExit(TankLogic logic) {
         println("WanderState onExit");
     }
 
-    void execute(Logic logic) {
+    void execute(TankLogic logic) {
         //println("WanderState execute");
 
         if(!logic.hasTarget) {
@@ -85,18 +85,18 @@ class RetreatState extends State {
 
     String name = "RetreatState";
 
-    void onEnter(Logic logic) {
+    void onEnter(TankLogic logic) {
         println("RetreatState onEnter");
         logic.pathToTarget = logic.findPath(logic.knownWorld.nodes[logic.tank.x][logic.tank.y], logic.knownWorld.nodes[logic.tank.xHome][logic.tank.yHome]);
         logic.hasPath = true;
         logic.hasTarget = true;
     }
 
-    void onExit(Logic logic) {
+    void onExit(TankLogic logic) {
         println("RetreatState onExit");
     }
 
-    void execute(Logic logic) {
+    void execute(TankLogic logic) {
         //println("WanderState execute");
     }
 
@@ -107,16 +107,16 @@ class ReportState extends State{
     
     String name = "ReportState";
 
-    void onEnter(Logic logic){
+    void onEnter(TankLogic logic){
         logic.logicTimer = timer.setNewTimer(3000);
         println("ReportState onEnter");
     }
 
-    void onExit(Logic logic){
+    void onExit(TankLogic logic){
         println("ReportState onExit");
     }
 
-    void execute(Logic logic){
+    void execute(TankLogic logic){
 
     }
 
@@ -127,16 +127,16 @@ class IdleState extends State{
 
     String name = "IdleState";
 
-    void onEnter(Logic logic){
+    void onEnter(TankLogic logic){
         println("IdleState onEnter");
 
     }
 
-    void onExit(Logic logic){
+    void onExit(TankLogic logic){
         println("IdleState onExit");
     }
 
-    void execute(Logic logic){
+    void execute(TankLogic logic){
 
     }
 }
@@ -146,15 +146,15 @@ class ScoutWanderState extends State {
 
     String name = "ScoutWanderState";
 
-    void onEnter(Logic logic) {
+    void onEnter(TankLogic logic) {
         println("ScoutWanderState onEnter");
     }
 
-    void onExit(Logic logic) {
+    void onExit(TankLogic logic) {
         println("ScoutWanderState onExit");
     }
 
-    void execute(Logic logic) {
+    void execute(TankLogic logic) {
         //println("WanderState execute");
 
         if(!logic.hasTarget) {

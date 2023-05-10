@@ -34,6 +34,12 @@ class KnownWorld {
         addBaseNodes(_team);
     }
 
+    void update(ArrayList<Node> newNodes) {
+        for(Node node : newNodes) {
+            addNode(node);
+        }
+    }
+
     // Adds a node to the known world.
     void addNode(Node node) {
         if(nodes[node.x][node.y] == null) {

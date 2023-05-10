@@ -9,8 +9,17 @@
   * This class defines the logic of the tank.
   */
 
-class Logic {
+abstract class Logic {
+    
+    // Flags to indicate if the tank has a target and a path to the target.
+    boolean hasTarget = false;
+    boolean hasPath = false;
 
+    // The target node and the path to the target.
+    Node target;
+    ArrayList<int[]> pathToTarget;
+    ArrayList<Node> targets = new ArrayList<>();
+    
     // The team that this logic is controlling
     Team team;
 
@@ -27,18 +36,7 @@ class Logic {
     ArrayList<Node> visited;
     ArrayList<Node> frontier;
 
-    // Constructor.
-    public Logic(Tank tank) {
-        this.tank = tank;
-        this.knownWorld = new KnownWorld(new Node(tank.x, tank.y));
-        this.stateMachine = new StateMachine(tankWanderState, this);
-        this.visited = new ArrayList<Node>();
-        this.frontier = new ArrayList<Node>(); 
-    }
-
-    Logic (Team team){
-        this.team = team;
-        this.knownWorld = new KnownWorld(team);
+    Logic (){
         this.visited = new ArrayList<Node>();
         this.frontier = new ArrayList<Node>();
     }
@@ -48,16 +46,12 @@ class Logic {
 
     }
 
-    // Finds the closest path from current node to target node
-    // Sets hasPath flag to true
-    void getPath(){
-        pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
-        hasPath = true;
-    }
     
-    void getTeamPath(){
-        pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
-        hasPath = true;
-    }
+    
+    //void getTeamPath(){
+    //    pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
+    //    hasPath = true;
+    //}
 
+    
 }

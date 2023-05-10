@@ -13,7 +13,9 @@ class Team{
     }
 
     void updateLogic(){
-
+        for(Tank t: this.tanks){
+            t.update();
+        }
     }
 
     void init(){

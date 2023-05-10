@@ -17,7 +17,7 @@ class RedTeam extends Team{
         }
     }
 
-    class RedLogic extends Logic{
+    class RedLogic extends TankLogic{
 
         RedLogic(Tank tank){
             super(tank);

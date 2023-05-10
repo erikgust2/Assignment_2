@@ -1,16 +1,17 @@
 class TankLogic extends Logic {
 
-    // Flags to indicate if the tank has a target and a path to the target.
-    boolean hasTarget = false;
-    boolean hasPath = false;
-
-    // The target node and the path to the target.
-    Node target;
-    ArrayList<int[]> pathToTarget;
-    ArrayList<Node> targets = new ArrayList<>();
+    
 
     // The tank that this logic is controlling.
     Tank tank;
+
+    // Constructor.
+    public TankLogic(Tank tank) {
+        super();
+        this.tank = tank;
+        this.knownWorld = new KnownWorld(new Node(tank.x, tank.y));
+        this.stateMachine = new StateMachine(tankWanderState, this);
+    }
   
     // Finds the next target node.
     // Implicitly targets in a breadth-first manner.
@@ -27,13 +28,39 @@ class TankLogic extends Logic {
         targets.add(target);
     }
 
+    void updateMap(KnownWorld map) {
+        knownWorld = map;
+    }
+
+    ArrayList<Node> getSurroundings() {
+        ArrayList<Node> surroundings = new ArrayList<>();
+        
+        for(int i = -1; i < 2; i++) {
+            for(int j = -1; j < 2; j++) {
+                int nx = tank.x + i;
+                int ny = tank.y + j;
+                if(nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
+                    surroundings.add(knownWorld.nodes[nx][ny]);
+                }
+            }
+        }
+
+        return surroundings;
+    }
+
     // Finds the closest path from current node to target node
     // Sets hasPath flag to true
     void getPath(){
         pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
         hasPath = true;
-    }  
-   
+    }
+
+    // Finds the path to the target node.
+    ArrayList<int[]> findPath(Node start, Node end) {
+        Graph g = new Graph(knownWorld.nodes);
+        return g.dijkstra(start, end);
+    }
+
     // Adds the nodes adjacent to the current node to the frontier.
     void addFrontierNodes(int x, int y){
         for(int i = -1; i <= 1; i++){
@@ -62,12 +89,6 @@ class TankLogic extends Logic {
                 }
             }
         }
-    }
-
-    // Finds the path to the target node.
-    ArrayList<int[]> findPath(Node start, Node end) {
-        Graph g = new Graph(knownWorld.nodes);
-        return g.dijkstra(start, end);
     }
 
     // Help class that holds the pathfinding logic.
@@ -169,17 +190,19 @@ class TankLogic extends Logic {
         int i = 0;
         int previousx = tank.x;
         int previousy = tank.y;
+        ArrayList<int[]> list;
 
         while(i < targets.size()) {
-            
-            bid += length(getPath(knownWorld.nodes[previousx][previousy], targets[i])); 
+            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i)); 
+            bid += list.size(); 
             
             i++;
-            previousx = targets[i-1].x;
-            previousy = targets[i-1].y; 
+            previousx = targets.get(i-1).x;
+            previousy = targets.get(i-1).y; 
         } 
 
-        bid += length(getPath(knownWorld.nodes[previousx][previousy], target));
+        list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
+        bid += list.size();
 
         return bid;
     }
