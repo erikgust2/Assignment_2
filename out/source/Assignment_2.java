@@ -249,6 +249,10 @@ class BlueTeam extends Team{
                 if(timer.getElapsedTime() >= this.logicTimer){
                     this.stateMachine.changeState(tankWanderState);
                 }
+            }else if(this.stateMachine.currentState == tankWanderState){
+                if(this.logicTimer >= timer.getElapsedTime()){
+                    return;
+                }
             }
 
             this.stateMachine.update();
@@ -266,6 +270,20 @@ class BlueTeam extends Team{
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(node);
+                }
+                if(knownWorld.nodes[node[0]][node[1]].obstacle){
+                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target);
+                    pathToTarget.remove(0);
+                    for(int i = 0; i < newPath.size(); i++){
+                        pathToTarget.add(0, newPath.get(i));
+                    }
+                    for(Tank t: this.tank.team.tanks){
+                        if(t.x == node[0]
+                        && t.y == node[1]){
+                            t.logic.logicTimer = timer.setNewTimer(100);
+                        }
+                    }
+                    return;
                 }
                 if(node[0] < this.tank.x){
                     this.tank.moveLeft();
