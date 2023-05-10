@@ -35,15 +35,19 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-            for(Node node : frontier) {
-                if(!assignedTargets.contains(node)) {
-                    targets.add(node);
+            for(Node node[] : knownWorld.nodes) {
+                for(Node n : node) {
+                    if(node != null && !assignedTargets.contains(node)) {
+                        //frontier.add(n);
+                    }
                 }
             } 
         }
         for(Tank tank : team.tanks) {
             tank.logic.updateMap(knownWorld, frontier);
         }
+
+        System.out.println("Frontier size: " + frontier.size());
 
         assignTargets();
     }

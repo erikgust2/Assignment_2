@@ -81,7 +81,7 @@ public void setup() {
     tree3 = new Tree(11, 10);
 
     setGameBoard();
-    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
     tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
@@ -90,11 +90,11 @@ public void draw() {
     if(tanks[0].logic.stateMachine.currentState != tankRetreatState
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
-    }else{
+    } else {
         //delay(1000);
     }
     
-    delay(100);
+    delay(50);
 
     background(255);
 
@@ -1089,9 +1089,7 @@ class TankLogic extends Logic {
 
     public void updateMap(KnownWorld map, ArrayList<Node> frontier) {
         knownWorld = map;
-        for(Node node : frontier) {
-            this.frontier.add(node);
-        }
+        for(Node node : frontier)
         for(Node target : targets) {
             target = knownWorld.nodes[target.x][target.y];
         }
@@ -1356,15 +1354,19 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-            for(Node node : frontier) {
-                if(!assignedTargets.contains(node)) {
-                    targets.add(node);
+            for(Node node[] : knownWorld.nodes) {
+                for(Node n : node) {
+                    if(node != null && !assignedTargets.contains(node)) {
+                        //frontier.add(n);
+                    }
                 }
             } 
         }
         for(Tank tank : team.tanks) {
             tank.logic.updateMap(knownWorld, frontier);
         }
+
+        System.out.println("Frontier size: " + frontier.size());
 
         assignTargets();
     }

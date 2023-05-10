@@ -64,7 +64,7 @@ void setup() {
     tree3 = new Tree(11, 10);
 
     setGameBoard();
-    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
     tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
@@ -73,11 +73,11 @@ void draw() {
     if(tanks[0].logic.stateMachine.currentState != tankRetreatState
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
-    }else{
+    } else {
         //delay(1000);
     }
     
-    delay(100);
+    delay(50);
 
     background(255);
 
