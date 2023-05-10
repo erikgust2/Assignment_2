@@ -37,8 +37,8 @@ class TeamLogic extends Logic {
             this.knownWorld.update(tankView);
             for(Node node[] : knownWorld.nodes) {
                 for(Node n : node) {
-                    if(node != null && !assignedTargets.contains(node)) {
-                        //frontier.add(n);
+                    if(n != null && !assignedTargets.contains(n)) {
+                        frontier.add(n);
                     }
                 }
             } 
@@ -55,7 +55,7 @@ class TeamLogic extends Logic {
     void assignTargets() {
         //System.out.println("Assigning targets...");
         while(frontier.size() > 0) {
-            Node target = frontier.remove(0);
+            Node target = frontier.remove(0); 
             performAuction(target);
         }
     }
@@ -70,6 +70,7 @@ class TeamLogic extends Logic {
             //System.out.println("Tank bidded " + currentBid);
             if(currentBid < bestBid) {
                 bestBidder = tank;
+                bestBid = currentBid;
             } else if (currentBid == bestBid) {
                 if(Math.random() < 0.5) {
                     bestBidder = tank;
@@ -80,7 +81,7 @@ class TeamLogic extends Logic {
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
             this.assignedTargets.add(target);
-            System.out.println("Tank won auction for " + target.x + ", " + target.y);
+            System.out.println("Tank[" + bestBidder.x + "," + bestBidder.y + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
         }
     }
 

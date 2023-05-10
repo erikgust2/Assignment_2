@@ -19,6 +19,7 @@ class TankLogic extends Logic {
     // Implicitly targets in a breadth-first manner.
     Node getTarget() {
         if(targets.size() == 0){
+            hasTarget = false;
             return null;
         }
         target = targets.remove(0);
@@ -140,7 +141,7 @@ class TankLogic extends Logic {
 
         // Finds the node with the smallest distance to the source node.
         int minDistance(int[] dist, boolean[] visited){
-            int min = Integer.MAX_VALUE, minIndex = -1;
+            int min = Integer.MAX_VALUE, minIndex = 0;
             for(int i = 0; i < size * size; i++){
                 if(!visited[i] && dist[i] < min){
                     min = dist[i];
@@ -153,7 +154,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         ArrayList<int[]> dijkstra(Node src, Node target){
-            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -169,8 +170,8 @@ class TankLogic extends Logic {
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
-                int u = minDistance(dist, visited); //<>//
-                println(u % size + ", " + u / size);
+                int u = minDistance(dist, visited);
+                //println(u % size + ", " + u / size);
                 visited[u] = true;
 
                 if(u == target.y * size + target.x){
@@ -209,7 +210,7 @@ class TankLogic extends Logic {
             }
 
             for(int i = 0; i < path.size(); i++){
-                println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                //println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
             }
 
             return path;
@@ -225,13 +226,13 @@ class TankLogic extends Logic {
   
         while( i < targets.size()){
             list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
-            bid += list.size();
+            bid += list.size() - 1;
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size();
+        bid += list.size() - 1;
         return bid;
     }
 

@@ -1073,6 +1073,7 @@ class TankLogic extends Logic {
     // Implicitly targets in a breadth-first manner.
     public Node getTarget() {
         if(targets.size() == 0){
+            hasTarget = false;
             return null;
         }
         target = targets.remove(0);
@@ -1194,7 +1195,7 @@ class TankLogic extends Logic {
 
         // Finds the node with the smallest distance to the source node.
         public int minDistance(int[] dist, boolean[] visited){
-            int min = Integer.MAX_VALUE, minIndex = -1;
+            int min = Integer.MAX_VALUE, minIndex = 0;
             for(int i = 0; i < size * size; i++){
                 if(!visited[i] && dist[i] < min){
                     min = dist[i];
@@ -1207,7 +1208,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         public ArrayList<int[]> dijkstra(Node src, Node target){
-            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -1223,8 +1224,8 @@ class TankLogic extends Logic {
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
-                int u = minDistance(dist, visited); //<>//
-                println(u % size + ", " + u / size);
+                int u = minDistance(dist, visited);
+                //println(u % size + ", " + u / size);
                 visited[u] = true;
 
                 if(u == target.y * size + target.x){
@@ -1263,7 +1264,7 @@ class TankLogic extends Logic {
             }
 
             for(int i = 0; i < path.size(); i++){
-                println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                //println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
             }
 
             return path;
@@ -1279,13 +1280,13 @@ class TankLogic extends Logic {
   
         while( i < targets.size()){
             list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
-            bid += list.size();
+            bid += list.size() - 1;
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size();
+        bid += list.size() - 1;
         return bid;
     }
 
@@ -1356,8 +1357,8 @@ class TeamLogic extends Logic {
             this.knownWorld.update(tankView);
             for(Node node[] : knownWorld.nodes) {
                 for(Node n : node) {
-                    if(node != null && !assignedTargets.contains(node)) {
-                        //frontier.add(n);
+                    if(n != null && !assignedTargets.contains(n)) {
+                        frontier.add(n);
                     }
                 }
             } 
@@ -1373,9 +1374,12 @@ class TeamLogic extends Logic {
 
     public void assignTargets() {
         //System.out.println("Assigning targets...");
+        int i = 0; //<>//
         while(frontier.size() > 0) {
-            Node target = frontier.remove(0);
-            performAuction(target);
+            Node target = frontier.remove(0); //<>//
+            performAuction(target); //<>//
+            i++;
+            println(i + "auctions performed");
         }
     }
 
@@ -1389,6 +1393,7 @@ class TeamLogic extends Logic {
             //System.out.println("Tank bidded " + currentBid);
             if(currentBid < bestBid) {
                 bestBidder = tank;
+                bestBid = currentBid;
             } else if (currentBid == bestBid) {
                 if(Math.random() < 0.5f) {
                     bestBidder = tank;
@@ -1399,7 +1404,7 @@ class TeamLogic extends Logic {
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
             this.assignedTargets.add(target);
-            System.out.println("Tank won auction for " + target.x + ", " + target.y);
+            System.out.println("Tank[" + bestBidder.x + "," + bestBidder.y + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
         }
     }
 
