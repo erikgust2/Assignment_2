@@ -165,8 +165,23 @@ class TankLogic extends Logic {
             }
             dist[src.y * size + src.x] = 0;
 
-            int[] dx = {-1,0,1,0};
-            int[] dy = {0,-1,0,1};
+            int[][] dxdy = {{-1,0},{0,-1},{1,0},{0,1}};
+            int r1, r2, r3, r4;
+            r1 = int(random(0,4));
+            r2 = r1;
+            r3 = r1;
+            r4 = r1;
+            while(r2 == r1){
+                r2 = int(random(0,4));
+            }
+            while(r3 == r1){
+                r3 = int(random(0,4));
+            }
+            while(r4 == r1){
+                r4 = int(random(0,4));
+            }
+            int[] dx = {dxdy[r1][0],dxdy[r2][0],dxdy[r3][0],dxdy[r4][0]}; 
+            int[] dy = {dxdy[r1][1],dxdy[r2][1],dxdy[r3][1],dxdy[r4][1]};
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
