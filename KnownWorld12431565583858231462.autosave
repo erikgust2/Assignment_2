@@ -42,7 +42,7 @@ class KnownWorld {
 
     // Adds a node to the known world.
     void addNode(Node node) {
-        if(node != null && nodes[node.x][node.y] == null) {
+        if(nodes[node.x][node.y] == null) {
             nodes[node.x][node.y] = node;
             nodes[node.x][node.y].explored = true;
         }

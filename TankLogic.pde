@@ -1,7 +1,5 @@
 class TankLogic extends Logic {
 
-    
-
     // The tank that this logic is controlling.
     Tank tank;
 
@@ -19,8 +17,8 @@ class TankLogic extends Logic {
         if(targets.size() == 0){
             return null;
         }
-        Node target = targets.get(0);
-        targets.remove(0);
+        Node target = targets.remove(0);
+        hasTarget = true;
         return target;
     }
 
@@ -185,25 +183,22 @@ class TankLogic extends Logic {
         }
     }
 
-    int getBid(Node target) {
+    int getBid(Node target){
         int bid = 0;
         int i = 0;
         int previousx = tank.x;
         int previousy = tank.y;
         ArrayList<int[]> list;
-
-        while(i < targets.size()) {
-            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i)); 
-            bid += list.size(); 
-            
+  
+        while( i < targets.size()){
+            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
+            bid += list.size();
+            previousx = targets.get(i).x;
+            previousy = targets.get(i).y;
             i++;
-            previousx = targets.get(i-1).x;
-            previousy = targets.get(i-1).y; 
-        } 
-
-        list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
+        }
+        list = findPath(knownWorld.nodes[previousx][previousy], target);
         bid += list.size();
-
         return bid;
     }
 

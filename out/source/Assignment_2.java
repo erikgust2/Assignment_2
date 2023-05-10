@@ -478,7 +478,7 @@ class KnownWorld {
 
     // Adds a node to the known world.
     public void addNode(Node node) {
-        if(nodes[node.x][node.y] == null) {
+        if(node != null && nodes[node.x][node.y] == null) {
             nodes[node.x][node.y] = node;
             nodes[node.x][node.y].explored = true;
         }
@@ -1036,8 +1036,6 @@ class Tank {
 }
 class TankLogic extends Logic {
 
-    
-
     // The tank that this logic is controlling.
     Tank tank;
 
@@ -1055,8 +1053,8 @@ class TankLogic extends Logic {
         if(targets.size() == 0){
             return null;
         }
-        Node target = targets.get(0);
-        targets.remove(0);
+        Node target = targets.remove(0);
+        hasTarget = true;
         return target;
     }
 
@@ -1221,25 +1219,22 @@ class TankLogic extends Logic {
         }
     }
 
-    public int getBid(Node target) {
+    public int getBid(Node target){
         int bid = 0;
         int i = 0;
         int previousx = tank.x;
         int previousy = tank.y;
         ArrayList<int[]> list;
-
-        while(i < targets.size()) {
-            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i)); 
-            bid += list.size(); 
-            
+  
+        while( i < targets.size()){
+            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
+            bid += list.size();
+            previousx = targets.get(i).x;
+            previousy = targets.get(i).y;
             i++;
-            previousx = targets.get(i-1).x;
-            previousy = targets.get(i-1).y; 
-        } 
-
-        list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
+        }
+        list = findPath(knownWorld.nodes[previousx][previousy], target);
         bid += list.size();
-
         return bid;
     }
 
@@ -1286,13 +1281,17 @@ class TeamLogic extends Logic {
         if(team.homebase[0] < 12) {
             for(int i = 0; i <= 3; i++) {
                 for(int j = 0; j <= 6; j++) {
-                    knownWorld.addNode(new Node(i, j));
+                    Node node = new Node(i, j);
+                    knownWorld.addNode(node);
+                    frontier.add(node);
                 }
             }
         } else {
             for(int i = 15; i >= 12; i--) {
                 for(int j = 15; j >= 8; j--) {
-                    knownWorld.addNode(new Node(i, j));
+                    Node node = new Node(i, j);
+                    knownWorld.addNode(node);
+                    frontier.add(node);
                 }
             }
         }
@@ -1302,6 +1301,11 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
+            /* for(Node node : tankView) {
+                if(!frontier.contains(node)) {
+                    frontier.add(node);
+                }
+            } */
         }
         for(Tank tank : team.tanks) {
             tank.logic.updateMap(knownWorld);
@@ -1311,6 +1315,7 @@ class TeamLogic extends Logic {
     }
 
     public void assignTargets() {
+        System.out.println("Assigning targets...");
         while(frontier.size() > 0) {
             Node target = frontier.remove(0);
             performAuction(target);
@@ -1318,6 +1323,7 @@ class TeamLogic extends Logic {
     }
 
     public void performAuction(Node target) {
+        System.out.println("Auction started");
         Tank bestBidder = null;
         int bestBid = 100000;
 
@@ -1334,6 +1340,7 @@ class TeamLogic extends Logic {
 
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
+            System.out.println("Tank won auction for " + target.x + ", " + target.y);
         }
     }
 

@@ -13,17 +13,13 @@ class TeamLogic extends Logic {
         if(team.homebase[0] < 12) {
             for(int i = 0; i <= 3; i++) {
                 for(int j = 0; j <= 6; j++) {
-                    Node node = new Node(i, j);
-                    knownWorld.addNode(node);
-                    frontier.add(node);
+                    knownWorld.addNode(new Node(i, j));
                 }
             }
         } else {
             for(int i = 15; i >= 12; i--) {
                 for(int j = 15; j >= 8; j--) {
-                    Node node = new Node(i, j);
-                    knownWorld.addNode(node);
-                    frontier.add(node);
+                    knownWorld.addNode(new Node(i, j));
                 }
             }
         }
@@ -33,11 +29,6 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-            /* for(Node node : tankView) {
-                if(!frontier.contains(node)) {
-                    frontier.add(node);
-                }
-            } */
         }
         for(Tank tank : team.tanks) {
             tank.logic.updateMap(knownWorld);
