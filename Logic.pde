@@ -55,12 +55,6 @@ class Logic {
         hasPath = true;
     }
     
-    // Finds the closest path from current node to target node
-    // Sets hasPath flag to true
-    void getPath(){
-        pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
-        hasPath = true;
-    }
     void getTeamPath(){
         pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
         hasPath = true;
