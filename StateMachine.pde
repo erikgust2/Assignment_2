@@ -38,7 +38,7 @@ class State{
 
     void onEnter(TankLogic logic) {}
     void onExit(TankLogic logic) {}
-    void execute(Logic logic) {}
+    void execute(TankLogic logic) {}
     String toString() {return "";}
 }
 
@@ -60,7 +60,7 @@ class WanderState extends State {
     }
 
     void execute(TankLogic logic) {
-        //println("WanderState execute");
+        println("WanderState execute");
 
         if(!logic.hasTarget) {
             logic.getTarget();

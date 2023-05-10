@@ -4,12 +4,14 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
-        this.tanks[1] = new BlueScoutTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
+        this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
     }
 
     void updateLogic(){
-       this.teamLogic.update(); 
+        System.out.println("Blue Team Logic");
+        super.updateLogic();
+        this.teamLogic.update(); 
     }
 
     void init(){
@@ -27,6 +29,7 @@ class BlueTeam extends Team{
         BlueTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
             this.logic = new BlueLogic(this);
+            this.logic.stateMachine.logic = this.logic;
         }
     }
 
@@ -87,6 +90,8 @@ class BlueTeam extends Team{
         }
 
         void update(){
+            System.out.println("Blue Tank Logic");
+            super.update();
             if(this.stateMachine.currentState == tankRetreatState){
                 if(this.pathToTarget.size() == 0){
                     this.hasPath = false;
@@ -102,6 +107,13 @@ class BlueTeam extends Team{
             this.stateMachine.update();
 
             if(this.hasPath && this.hasTarget){
+
+                if(this.knownWorld.nodes[target.x][target.y].obstacle) {
+                    this.hasTarget = false;
+                    this.hasPath = false;
+                    return;
+                }
+
                 int[] node = this.pathToTarget.get(0);
 
                 if(node[0] == this.tank.x
@@ -143,11 +155,15 @@ class BlueTeam extends Team{
             this.stateMachine.update();
 
             if(this.hasPath && this.hasTarget){
+                System.out.println("Heading towards " + this.target.x + ", " + this.target.y);
                 int[] node = this.pathToTarget.get(0);
 
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(node);
+                } else if (this.pathToTarget.get(1)[0] == target.x && this.pathToTarget.get(1)[1] == target.y) {
+                    this.pathToTarget.remove(0);
+                    this.pathToTarget.remove(0);
                 }
                 if(node[0] < this.tank.x){
                     this.tank.moveLeft();

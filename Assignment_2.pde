@@ -74,9 +74,11 @@ void draw() {
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
     }else{
-        delay(50);
+        //delay(1000);
     }
     
+    delay(100);
+
     background(255);
 
     redTeam.updateLogic();

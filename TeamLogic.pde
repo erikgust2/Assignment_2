@@ -2,6 +2,8 @@ class TeamLogic extends Logic {
 
     Team team;
 
+    ArrayList<Node> assignedTargets = new ArrayList<Node>();
+
     TeamLogic(Team team) {
         super();
         this.team = team;
@@ -33,21 +35,21 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-            /* for(Node node : tankView) {
-                if(!frontier.contains(node)) {
-                    frontier.add(node);
+            for(Node node : frontier) {
+                if(!assignedTargets.contains(node)) {
+                    targets.add(node);
                 }
-            } */
+            } 
         }
         for(Tank tank : team.tanks) {
-            tank.logic.updateMap(knownWorld);
+            tank.logic.updateMap(knownWorld, frontier);
         }
 
         assignTargets();
     }
 
     void assignTargets() {
-        System.out.println("Assigning targets...");
+        //System.out.println("Assigning targets...");
         while(frontier.size() > 0) {
             Node target = frontier.remove(0);
             performAuction(target);
@@ -61,6 +63,7 @@ class TeamLogic extends Logic {
 
         for(Tank tank : team.tanks) {
             int currentBid = tank.logic.getBid(target);
+            //System.out.println("Tank bidded " + currentBid);
             if(currentBid < bestBid) {
                 bestBidder = tank;
             } else if (currentBid == bestBid) {
@@ -72,6 +75,7 @@ class TeamLogic extends Logic {
 
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
+            this.assignedTargets.add(target);
             System.out.println("Tank won auction for " + target.x + ", " + target.y);
         }
     }

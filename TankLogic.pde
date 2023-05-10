@@ -10,6 +10,10 @@ class TankLogic extends Logic {
         this.knownWorld = new KnownWorld(new Node(tank.x, tank.y));
         this.stateMachine = new StateMachine(tankWanderState, this);
     }
+
+    void update() {
+        
+    }
   
     // Finds the next target node.
     // Implicitly targets in a breadth-first manner.
@@ -17,7 +21,10 @@ class TankLogic extends Logic {
         if(targets.size() == 0){
             return null;
         }
-        Node target = targets.remove(0);
+        target = targets.remove(0);
+        while(knownWorld.nodes[target.x][target.y].obstacle) {
+            target = getTarget();
+        }
         hasTarget = true;
         return target;
     }
@@ -26,8 +33,22 @@ class TankLogic extends Logic {
         targets.add(target);
     }
 
-    void updateMap(KnownWorld map) {
+    void updateMap(KnownWorld map, ArrayList<Node> frontier) {
         knownWorld = map;
+        for(Node node : frontier) {
+            this.frontier.add(node);
+        }
+        for(Node target : targets) {
+            target = knownWorld.nodes[target.x][target.y];
+        }
+        if(hasPath) {
+            for(int[] node : pathToTarget) {
+                if(knownWorld.nodes[node[0]][node[1]].obstacle) {
+                    pathToTarget = findPath(knownWorld.nodes[tank.x][tank.y], target);
+                    break;
+                }
+            }
+        }
     }
 
     ArrayList<Node> getSurroundings() {
@@ -38,6 +59,20 @@ class TankLogic extends Logic {
                 int nx = tank.x + i;
                 int ny = tank.y + j;
                 if(nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
+                    Node nodeToAdd = new Node(nx, ny);
+                    if(gameBoard[nx][ny].type == CellType.TREE){
+                        nodeToAdd.type = CellType.TREE;
+                        nodeToAdd.obstacle = true;
+                    }
+                    for(Tank t : tanks){
+                        if(t.x == nodeToAdd.x && t.y == nodeToAdd.y){
+                            nodeToAdd.type = CellType.TANK;
+                            nodeToAdd.obstacle = true;
+                            if(t.team != tank.team){
+                                stateMachine.changeState(tankRetreatState);
+                            }
+                        }
+                    }
                     surroundings.add(knownWorld.nodes[nx][ny]);
                 }
             }
