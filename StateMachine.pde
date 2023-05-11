@@ -49,10 +49,6 @@ class WanderState extends State {
 
     void onEnter(TankLogic logic) {
         println("WanderState onEnter");
-        logic.knownWorld.nodes[logic.tank.x][logic.tank.y].visited = true;
-        logic.visited.add(logic.knownWorld.nodes[logic.tank.x][logic.tank.y]);
-        
-        logic.addFrontierNodes(logic.tank.x, logic.tank.y);
     }
 
     void onExit(TankLogic logic) {

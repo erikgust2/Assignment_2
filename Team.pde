@@ -14,7 +14,9 @@ class Team{
 
     void updateLogic(){
         for(Tank t: this.tanks){
-            t.update();
+            if(t != null){
+                t.update();
+            }
         }
     }
 

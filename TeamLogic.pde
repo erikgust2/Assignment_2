@@ -16,6 +16,7 @@ class TeamLogic extends Logic {
             for(int i = 0; i <= 3; i++) {
                 for(int j = 0; j <= 6; j++) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -24,6 +25,7 @@ class TeamLogic extends Logic {
             for(int i = 15; i >= 12; i--) {
                 for(int j = 15; j >= 8; j--) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -33,17 +35,23 @@ class TeamLogic extends Logic {
 
     void update() {
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
         }
         for(Node node[] : knownWorld.nodes) {
             for(Node n : node) {
-                if(n != null && !n.visited && !frontier.contains(n)) {
+                if(n != null && n.explored && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
             }
         }
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             tank.logic.updateMap(knownWorld, frontier);
         }
 
@@ -72,6 +80,9 @@ class TeamLogic extends Logic {
         int bestBid = 100000;
 
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             if(tank instanceof BlueTeam.DummyTank
             || tank instanceof RedTeam.DummyTank){
                 continue;

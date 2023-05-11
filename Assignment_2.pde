@@ -56,7 +56,7 @@ void setup() {
     tanks[1] = redTeam.tanks[1];
     tanks[2] = redTeam.tanks[2];
     tanks[3] = blueTeam.tanks[0];
-    tanks[4] = blueTeam.tanks[1];
+    //tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
     blueTeam.init();
@@ -70,8 +70,8 @@ void setup() {
     trees[2] = tree3;
 
     setGameBoard();
-    tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
-    tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
+    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    //tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
 void draw() {
@@ -91,6 +91,9 @@ void draw() {
     blueTeam.updateLogic();
     
     for(Tank tank : tanks) {
+        if(tank == null){
+            continue;
+        }
         tank.draw();
     }
 

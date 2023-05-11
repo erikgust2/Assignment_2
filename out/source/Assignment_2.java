@@ -73,7 +73,7 @@ public void setup() {
     tanks[1] = redTeam.tanks[1];
     tanks[2] = redTeam.tanks[2];
     tanks[3] = blueTeam.tanks[0];
-    tanks[4] = blueTeam.tanks[1];
+    //tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
     blueTeam.init();
@@ -87,8 +87,8 @@ public void setup() {
     trees[2] = tree3;
 
     setGameBoard();
-    tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
-    tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
+    //tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);
+    //tanks[3].logic.addFrontierNodes(tanks[3].x, tanks[3].y);
 }
 
 public void draw() {
@@ -108,6 +108,9 @@ public void draw() {
     blueTeam.updateLogic();
     
     for(Tank tank : tanks) {
+        if(tank == null){
+            continue;
+        }
         tank.draw();
     }
 
@@ -157,7 +160,7 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, 3, this);
-        this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
+        //this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, 5, this);
         init();
     }
@@ -170,7 +173,9 @@ class BlueTeam extends Team{
 
     public void init(){
         for(Tank t: this.tanks){
-            teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+            if(t != null){
+                teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+            }
         }
     }
 
@@ -290,19 +295,23 @@ class BlueTeam extends Team{
                     return;
                 }
 
+                node = this.pathToTarget.get(0);
+
                 // Collision check
                 for(Tank t: this.tank.team.tanks){
+                    if(t == null){
+                        continue;
+                    }
                     if(t.id != this.tank.id
                     && t.x == node[0]
                     && t.y == node[1]){
-                        remakePaths(this.tank, t);
+                        this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
                 }
                 for(Tree t: trees){
                     if(t.x == node[0]
                     && t.y == node[1]){
-                        this.hasPath = false;
-                        this.hasTarget = false;
+                        this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
                 }
 
@@ -925,30 +934,28 @@ class Node {
     // Draws it in different colors depending on the type of node.
     // If the node has been explored or visited it will also have a circle drawn on it for debugging purposes.
     public void draw(int _teamcolor) {
-        if(!explored) {
-            strokeWeight(1);
-            if (type == CellType.TREE) {
-                fill(treeColor, 50);
-            } else if (type == CellType.NATO) {
-                fill(natoColor, 80);
-            } else if (type == CellType.PACT) {
-                fill(pactColor, 90);
-            } else if (type == CellType.EMPTY) {
+        strokeWeight(1);
+        if (type == CellType.TREE) {
+            fill(treeColor, 50);
+        } else if (type == CellType.NATO) {
+            fill(natoColor, 80);
+        } else if (type == CellType.PACT) {
+            fill(pactColor, 90);
+        } else if (type == CellType.EMPTY) {
                 fill(exploredColor, 50);
-            } else {
-                fill(emptyColor, 50);
-            }
-            rect(x * cellSize, y * cellSize, cellSize, cellSize);
         } else {
-            if(visited){
-                fill(_teamcolor);
-            }else {
-                fill(0, 255 , 0, 120);
-            }
-            if(obstacle){
-                fill(0, 0, 0, 120);
-            }
-            
+            fill(emptyColor, 50);
+        }
+        rect(x * cellSize, y * cellSize, cellSize, cellSize);
+        if(visited){
+            fill(_teamcolor);
+            ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
+        }else if(explored){
+            fill(0, 255 , 0, 120);
+            ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
+        }
+        if(obstacle){
+            fill(0, 0, 0, 120);
             ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
         }
         textSize(12);
@@ -1073,10 +1080,6 @@ class WanderState extends State {
 
     public void onEnter(TankLogic logic) {
         println("WanderState onEnter");
-        logic.knownWorld.nodes[logic.tank.x][logic.tank.y].visited = true;
-        logic.visited.add(logic.knownWorld.nodes[logic.tank.x][logic.tank.y]);
-        
-        logic.addFrontierNodes(logic.tank.x, logic.tank.y);
     }
 
     public void onExit(TankLogic logic) {
@@ -1343,6 +1346,9 @@ class Tank {
         }
 
         for(Tank tank : tanks) {
+            if(tank == null){
+                continue;
+            }
             if(tank.x == targetX && tank.y == targetY) {
                 logic.knownWorld.nodes[targetX][targetY].type = CellType.TANK;
                 logic.knownWorld.nodes[targetX][targetY].obstacle = true;
@@ -1439,6 +1445,9 @@ class TankLogic extends Logic {
                         nodeToAdd.obstacle = true;
                     }
                     for(Tank t : tanks){
+                        if(t == null){
+                            continue;
+                        }
                         if(t.x == nodeToAdd.x && t.y == nodeToAdd.y){
                             nodeToAdd.type = CellType.TANK;
                             nodeToAdd.obstacle = true;
@@ -1562,14 +1571,16 @@ class TankLogic extends Logic {
             for(int i = 0; i < size * size -1; i++){
                 int u = minDistance(dist, visited);
                 //println(u % size + ", " + u / size);
-                visited[u] = true;
+                int ux = u % size;
+                int uy = u / size;
+
+                if(nodes[ux][uy] != null && !nodes[ux][uy].obstacle){
+                    visited[u] = true;
+                }
 
                 if(u == target.y * size + target.x){
                     break;
                 }
-
-                int ux = u % size;
-                int uy = u / size;
                 
                 for(int j = 0; j < 4; j++){
                     int vx = ux + dx[j];
@@ -1643,7 +1654,9 @@ class Team{
 
     public void updateLogic(){
         for(Tank t: this.tanks){
-            t.update();
+            if(t != null){
+                t.update();
+            }
         }
     }
 
@@ -1672,6 +1685,7 @@ class TeamLogic extends Logic {
             for(int i = 0; i <= 3; i++) {
                 for(int j = 0; j <= 6; j++) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -1680,6 +1694,7 @@ class TeamLogic extends Logic {
             for(int i = 15; i >= 12; i--) {
                 for(int j = 15; j >= 8; j--) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -1689,17 +1704,23 @@ class TeamLogic extends Logic {
 
     public void update() {
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
         }
         for(Node node[] : knownWorld.nodes) {
             for(Node n : node) {
-                if(n != null && !n.visited && !frontier.contains(n)) {
+                if(n != null && n.explored && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
             }
         }
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             tank.logic.updateMap(knownWorld, frontier);
         }
 
@@ -1728,6 +1749,9 @@ class TeamLogic extends Logic {
         int bestBid = 100000;
 
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             if(tank instanceof BlueTeam.DummyTank
             || tank instanceof RedTeam.DummyTank){
                 continue;
