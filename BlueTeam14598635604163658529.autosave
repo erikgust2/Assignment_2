@@ -20,7 +20,7 @@ class BlueTeam extends Team{
         //         Node toAdd = new Node(i,j);
         //         toAdd.visited = true;
         //         teamLogic.knownWorld.addNode(toAdd);
-        //         teamLogic.addFrontierNodes(i, j); //<>//
+        //         teamLogic.addFrontierNodes(i, j);
         //     }
         // }
     }
@@ -38,7 +38,7 @@ class BlueTeam extends Team{
             super(_x, _y, _team);
         }
     }
-    /*
+
     class BlueScoutTank extends Tank{
         BlueScoutTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
@@ -87,7 +87,7 @@ class BlueTeam extends Team{
                 //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
-    }*/
+    }
 
     class BlueLogic extends TankLogic{
 
@@ -98,8 +98,6 @@ class BlueTeam extends Team{
         void update(){
             //System.out.println("Blue Tank Logic");
             super.update();
-
-            // State checks and changes
             if(this.stateMachine.currentState == tankRetreatState){
                 if(this.pathToTarget.size() == 0){
                     this.hasPath = false;
@@ -113,8 +111,6 @@ class BlueTeam extends Team{
             }else if(this.stateMachine.currentState == tankWaitingState){
                 if(this.logicTimer >= timer.getElapsedTime()){
                     return;
-                }else{
-                    this.stateMachine.changeState(tankWanderState);
                 }
             }
 
@@ -122,9 +118,7 @@ class BlueTeam extends Team{
 
             if(this.hasPath && this.hasTarget){
 
-                // Target is obstacle check
-                if(target.obstacle && this.pathToTarget.size() < 2) {
-                    println("Obstacle at target!");
+                if(this.knownWorld.nodes[target.x][target.y].obstacle) {
                     this.hasTarget = false;
                     this.hasPath = false;
                     return;
@@ -132,42 +126,24 @@ class BlueTeam extends Team{
 
                 int[] node = this.pathToTarget.get(0);
 
-                // Arrived at node check
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(node);
-                    return;
                 }
-                // Collision check
-                if(this.knownWorld.nodes[node[0]][node[1]].obstacle){
-                    println("Obstacle on the way to target!");
-                    println(pathToTarget.size() + " moves to target. Recalculating...");
-                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target); //<>//
+                if(knownWorld.nodes[node[0]][node[1]].obstacle){
+                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target);
                     this.pathToTarget.remove(0);
                     for(int i = 0; i < newPath.size(); i++){
                         this.pathToTarget.add(0, newPath.get(i));
                     }
-                    if(pathToTarget.size() < 2){
-                        this.hasTarget = false;
-                        this.hasPath = false;
-                        return;
-                    }
-                    println(pathToTarget.size() + " moves to target.");
-                    println("Moving from " + this.tank.x + "," + this.tank.y + " to " + target.x + "," + target.y);
-                    for(Tank t: this.tank.team.tanks){ //<>//
-                        if(t != this.tank
-                        && t.x == node[0]
+                    for(Tank t: this.tank.team.tanks){
+                        if(t.x == node[0]
                         && t.y == node[1]){
-                            if(t.logic.stateMachine.currentState != tankWaitingState){
-                                t.logic.stateMachine.changeState(tankWaitingState);
-                                println("Tank " + this.tank.x + "," + this.tank.y + " told Tank " + t.x + "," + t.y + " to sleep");
-                            }
+                            t.logic.stateMachine.changeState(tankWaitingState);
                         }
                     }
                     return;
                 }
-
-                // Movement
                 if(node[0] < this.tank.x){
                     this.tank.moveLeft();
                 }else if(node[0] > this.tank.x){
@@ -180,7 +156,7 @@ class BlueTeam extends Team{
             }
         }
     }
-    /*
+
     class BlueScoutLogic extends BlueLogic{
 
         BlueScoutLogic(Tank tank){
@@ -245,5 +221,5 @@ class BlueTeam extends Team{
             hasTarget = false;
             return null;
         }
-    }*/
+    }
 }

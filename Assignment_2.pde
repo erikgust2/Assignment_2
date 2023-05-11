@@ -95,7 +95,7 @@ void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamLogic.knownWorld.draw(); //<>//
+    blueTeam.teamLogic.knownWorld.draw();
 }
 
 void drawGrid() {

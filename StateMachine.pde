@@ -60,7 +60,7 @@ class WanderState extends State {
     }
 
     void execute(TankLogic logic) {
-        println("WanderState execute");
+        //println("WanderState execute");
 
         if(!logic.hasTarget) {
             logic.getTarget();

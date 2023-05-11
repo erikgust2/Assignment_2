@@ -112,7 +112,7 @@ public void draw() {
     drawGrid();
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
-    blueTeam.teamLogic.knownWorld.draw(); //<>//
+    blueTeam.teamLogic.knownWorld.draw();
 }
 
 public void drawGrid() {
@@ -185,7 +185,7 @@ class BlueTeam extends Team{
             super(_x, _y, _team);
         }
     }
-
+    /*
     class BlueScoutTank extends Tank{
         BlueScoutTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
@@ -193,13 +193,13 @@ class BlueTeam extends Team{
             //this.logic.stateMachine = new StateMachine(scoutTankWanderState, teamLogic);
         }
 
-        public void update(){
+        void update(){
             teamLogic.knownWorld.nodes[x][y].visited = true;
             this.logic.update();
         }
 
         // Move the tank in a given direction
-        public void moveRight() {
+        void moveRight() {
             if(!checkCollision(this.x + 1, this.y)) {
                 this.x += 1;
                 this.xCoord = x * 50;
@@ -208,7 +208,7 @@ class BlueTeam extends Team{
             }
         }
 
-        public void moveLeft() {
+        void moveLeft() {
             if(!checkCollision(this.x - 1, this.y)) {
                 this.x -= 1;
                 this.xCoord = x * 50;
@@ -217,7 +217,7 @@ class BlueTeam extends Team{
             }
         }
 
-        public void moveUp() {
+        void moveUp() {
             if(!checkCollision(this.x, this.y - 1)) {
                 this.y -= 1;
                 this.yCoord = y * 50;
@@ -226,7 +226,7 @@ class BlueTeam extends Team{
             }
         }
 
-        public void moveDown() {
+        void moveDown() {
             if(!checkCollision(this.x, this.y + 1)) {
                 this.y += 1;
                 this.yCoord = y * 50;
@@ -234,7 +234,7 @@ class BlueTeam extends Team{
                 //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
-    }
+    }*/
 
     class BlueLogic extends TankLogic{
 
@@ -283,23 +283,32 @@ class BlueTeam extends Team{
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(node);
+                    return;
                 }
                 // Collision check
-                if(knownWorld.nodes[node[0]][node[1]].obstacle){
+                if(this.knownWorld.nodes[node[0]][node[1]].obstacle){
                     println("Obstacle on the way to target!");
                     println(pathToTarget.size() + " moves to target. Recalculating...");
-                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target);
+                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target); //<>//
                     this.pathToTarget.remove(0);
                     for(int i = 0; i < newPath.size(); i++){
                         this.pathToTarget.add(0, newPath.get(i));
                     }
+                    if(pathToTarget.size() < 2){
+                        this.hasTarget = false;
+                        this.hasPath = false;
+                        return;
+                    }
                     println(pathToTarget.size() + " moves to target.");
-                    for(Tank t: this.tank.team.tanks){
+                    println("Moving from " + this.tank.x + "," + this.tank.y + " to " + target.x + "," + target.y);
+                    for(Tank t: this.tank.team.tanks){ //<>//
                         if(t != this.tank
                         && t.x == node[0]
                         && t.y == node[1]){
-                            t.logic.stateMachine.changeState(tankWaitingState);
-                            println("Tank " + this.tank.x + "," + this.tank.y + " told Tank " + t.x + "," + t.y + " to sleep");
+                            if(t.logic.stateMachine.currentState != tankWaitingState){
+                                t.logic.stateMachine.changeState(tankWaitingState);
+                                println("Tank " + this.tank.x + "," + this.tank.y + " told Tank " + t.x + "," + t.y + " to sleep");
+                            }
                         }
                     }
                     return;
@@ -318,14 +327,14 @@ class BlueTeam extends Team{
             }
         }
     }
-
+    /*
     class BlueScoutLogic extends BlueLogic{
 
         BlueScoutLogic(Tank tank){
             super(tank);
         }
 
-        public void update(){
+        void update(){
             if(this.stateMachine.currentState == tankRetreatState){
                 if(this.pathToTarget.size() == 0){
                     this.hasPath = false;
@@ -363,7 +372,7 @@ class BlueTeam extends Team{
             }
         }
 
-        public Node getTarget(){
+        Node getTarget(){
             if(!teamLogic.frontier.isEmpty()){
                 do {
                     target = teamLogic.frontier.remove(0);
@@ -383,7 +392,7 @@ class BlueTeam extends Team{
             hasTarget = false;
             return null;
         }
-    }
+    }*/
 }
 /* 
  * Authors:
@@ -834,7 +843,7 @@ class WanderState extends State {
     }
 
     public void execute(TankLogic logic) {
-        println("WanderState execute");
+        //println("WanderState execute");
 
         if(!logic.hasTarget) {
             logic.getTarget();
@@ -1434,13 +1443,13 @@ class TeamLogic extends Logic {
         for(Tank tank : team.tanks) {
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-            for(Node node[] : knownWorld.nodes) {
-                for(Node n : node) {
-                    if(n != null && !assignedTargets.contains(n)) {
-                        frontier.add(n);
-                    }
+        }
+        for(Node node[] : knownWorld.nodes) {
+            for(Node n : node) {
+                if(n != null && !n.visited && !n.explored && frontier.contains(n)) {
+                    frontier.add(n);
                 }
-            } 
+            }
         }
         for(Tank tank : team.tanks) {
             tank.logic.updateMap(knownWorld, frontier);
@@ -1453,8 +1462,14 @@ class TeamLogic extends Logic {
 
     public void assignTargets() {
         //System.out.println("Assigning targets...");
+        outerloop:
         while(frontier.size() > 0) {
-            Node target = frontier.remove(0); 
+            Node target = frontier.remove(0);
+            for(Node n : assignedTargets) {
+                if(n.x == target.x && n.y == target.y) {
+                    continue outerloop;
+                }
+            } 
             performAuction(target);
         }
     }
