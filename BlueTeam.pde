@@ -118,49 +118,39 @@ class BlueTeam extends Team{
 
             if(this.hasPath && this.hasTarget){
 
-                // Target is obstacle check
-                if(target.obstacle && this.pathToTarget.size() < 2) {
-                    println("Obstacle at target!");
-                    this.hasTarget = false;
-                    this.hasPath = false;
-                    return;
-                }
-
                 int[] node = this.pathToTarget.get(0);
 
                 // Arrived at node check
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
-                    this.pathToTarget.remove(node);
-                    return;
+                    this.pathToTarget.remove(0);
+                }else{
+                    ArrayList<int[]> failsafe = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[node[0]][node[1]]);
+                    for(int i = failsafe.size() - 1; i >= 0; i--){
+                        this.pathToTarget.add(0, failsafe.get(i));
+                    }
                 }
+                // Arrived at target check
+                if(pathToTarget.size() == 0){
+                    this.hasPath = false;
+                    this.hasTarget = false;
+                }
+
                 // Collision check
                 if(this.knownWorld.nodes[node[0]][node[1]].obstacle){
-                    println("Obstacle on the way to target!");
-                    println(pathToTarget.size() + " moves to target. Recalculating...");
-                    ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target); //<>//
-                    this.pathToTarget.remove(0);
-                    for(int i = 0; i < newPath.size(); i++){
-                        this.pathToTarget.add(0, newPath.get(i));
-                    }
-                    if(pathToTarget.size() < 2){
-                        this.hasTarget = false;
+                    if(this.knownWorld.nodes[node[0]][node[1]].type == CellType.TREE){
                         this.hasPath = false;
+                        this.hasTarget = false;
                         return;
                     }
-                    println(pathToTarget.size() + " moves to target.");
-                    println("Moving from " + this.tank.x + "," + this.tank.y + " to " + target.x + "," + target.y);
-                    for(Tank t: this.tank.team.tanks){ //<>//
+                    for(Tank t: this.tank.team.tanks){
                         if(t != this.tank
                         && t.x == node[0]
                         && t.y == node[1]){
-                            if(t.logic.stateMachine.currentState != tankWaitingState){
-                                t.logic.stateMachine.changeState(tankWaitingState);
-                                println("Tank " + this.tank.x + "," + this.tank.y + " told Tank " + t.x + "," + t.y + " to sleep");
-                            }
-                        }
+                            remakePaths(this.tank, t);
+                        }    
                     }
-                    return;
+
                 }
 
                 // Movement
@@ -172,6 +162,24 @@ class BlueTeam extends Team{
                     this.tank.moveUp();
                 }else if(node[1] > this.tank.y){
                     this.tank.moveDown();
+                }
+            }
+        }
+
+        void remakePaths(Tank tank1, Tank tank2){
+            ArrayList<int[]> path1 = tank1.logic.pathToTarget;
+            ArrayList<int[]> path2 = tank2.logic.pathToTarget;
+
+            if(path1.get(0)[0] == tank2.x
+            && path1.get(0)[1] == tank2.y){
+                if(path2.get(0)[0] == tank1.x
+                && path2.get(0)[1] == tank1.y){
+                    ArrayList<int[]> temp = findPath(tank1.logic.knownWorld.nodes[tank1.x][tank1.y], tank1.logic.knownWorld.nodes[path1.get(1)[0]][path1.get(1)[1]]);
+                    for(int i = 0; i < temp.size(); i++){
+                        path1.add(i, temp.get(i));
+                    }
+                }else{
+                    return;
                 }
             }
         }

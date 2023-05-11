@@ -58,6 +58,7 @@ class TankLogic extends Logic {
                 int ny = tank.y + j;
                 if(nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
                     Node nodeToAdd = new Node(nx, ny);
+                    nodeToAdd.obstacle = false;
                     if(gameBoard[nx][ny].type == CellType.TREE){
                         nodeToAdd.type = CellType.TREE;
                         nodeToAdd.obstacle = true;
@@ -71,7 +72,7 @@ class TankLogic extends Logic {
                             }
                         }
                     }
-                    surroundings.add(knownWorld.nodes[nx][ny]);
+                    surroundings.add(nodeToAdd);
                 }
             }
         }
