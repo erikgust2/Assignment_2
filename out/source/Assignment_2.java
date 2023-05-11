@@ -153,6 +153,7 @@ class BlueTeam extends Team{
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+        init();
     }
 
     public void updateLogic(){
@@ -162,14 +163,9 @@ class BlueTeam extends Team{
     }
 
     public void init(){
-        // for(int i = this.homebase[0]; i <= this.homebase[2]; i++){
-        //     for(int j = this.homebase[1]; j <= this.homebase[3]; j++){
-        //         Node toAdd = new Node(i,j);
-        //         toAdd.visited = true;
-        //         teamLogic.knownWorld.addNode(toAdd);
-        //         teamLogic.addFrontierNodes(i, j); //<>//
-        //     }
-        // }
+        for(Tank t: this.tanks){
+            teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+        }
     }
 
     class BlueTank extends Tank{
@@ -551,14 +547,13 @@ class KnownWorld {
     }
 
     public void addBaseNodes(Team team){
-        for(int i = team.homebase[0]; i < team.homebase[2]; i++){
-            for(int j = team.homebase[1]; j < team.homebase[3]; j++){
+        for(int i = team.homebase[0]; i <= team.homebase[2]; i++){
+            for(int j = team.homebase[1]; j <= team.homebase[3]; j++){
                 if(team == redTeam){
                     nodes[i][j] = new Node(CellType.PACT, i, j);
                 }else{
                     nodes[i][j] = new Node(CellType.NATO, i, j);
                 }
-                
             }
         }
     }
@@ -704,7 +699,7 @@ class Node {
         } else {
             if(visited){
                 fill(_teamcolor);
-            }else if(explored){
+            }else {
                 fill(0, 255 , 0, 120);
             }
             if(obstacle){
@@ -1446,7 +1441,7 @@ class TeamLogic extends Logic {
         }
         for(Node node[] : knownWorld.nodes) {
             for(Node n : node) {
-                if(n != null && !n.visited && !n.explored && frontier.contains(n)) {
+                if(n != null && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
             }

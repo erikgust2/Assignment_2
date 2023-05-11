@@ -6,6 +6,7 @@ class BlueTeam extends Team{
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
         this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+        init();
     }
 
     void updateLogic(){
@@ -15,14 +16,9 @@ class BlueTeam extends Team{
     }
 
     void init(){
-        // for(int i = this.homebase[0]; i <= this.homebase[2]; i++){
-        //     for(int j = this.homebase[1]; j <= this.homebase[3]; j++){
-        //         Node toAdd = new Node(i,j);
-        //         toAdd.visited = true;
-        //         teamLogic.knownWorld.addNode(toAdd);
-        //         teamLogic.addFrontierNodes(i, j); //<>//
-        //     }
-        // }
+        for(Tank t: this.tanks){
+            teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+        }
     }
 
     class BlueTank extends Tank{

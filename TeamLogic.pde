@@ -38,7 +38,7 @@ class TeamLogic extends Logic {
         }
         for(Node node[] : knownWorld.nodes) {
             for(Node n : node) {
-                if(n != null && !n.visited && !n.explored && !frontier.contains(n)) {
+                if(n != null && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
             }

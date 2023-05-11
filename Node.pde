@@ -71,7 +71,7 @@ class Node {
         } else {
             if(visited){
                 fill(_teamcolor);
-            }else if(explored){
+            }else {
                 fill(0, 255 , 0, 120);
             }
             if(obstacle){

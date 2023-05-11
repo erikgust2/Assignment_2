@@ -49,14 +49,13 @@ class KnownWorld {
     }
 
     void addBaseNodes(Team team){
-        for(int i = team.homebase[0]; i < team.homebase[2]; i++){
-            for(int j = team.homebase[1]; j < team.homebase[3]; j++){
+        for(int i = team.homebase[0]; i <= team.homebase[2]; i++){
+            for(int j = team.homebase[1]; j <= team.homebase[3]; j++){
                 if(team == redTeam){
                     nodes[i][j] = new Node(CellType.PACT, i, j);
                 }else{
                     nodes[i][j] = new Node(CellType.NATO, i, j);
                 }
-                
             }
         }
     }
