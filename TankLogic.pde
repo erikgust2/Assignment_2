@@ -241,13 +241,13 @@ class TankLogic extends Logic {
   
         while( i < targets.size()){
             list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
-            bid += list.size() - 1;
+            bid += list.size();
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size() - 1;
+        bid += list.size();
         return bid;
     }
 

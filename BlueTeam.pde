@@ -125,10 +125,10 @@ class BlueTeam extends Team{
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(0);
                 }else{
-                    ArrayList<int[]> failsafe = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[node[0]][node[1]]);
-                    for(int i = failsafe.size() - 1; i >= 0; i--){
-                        this.pathToTarget.add(0, failsafe.get(i));
-                    }
+                    //ArrayList<int[]> failsafe = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[node[0]][node[1]]);
+                    //for(int i = failsafe.size() - 1; i >= 0; i--){
+                    //    this.pathToTarget.add(0, failsafe.get(i));
+                    //}
                 }
                 // Arrived at target check
                 if(pathToTarget.size() == 0){
@@ -169,6 +169,108 @@ class BlueTeam extends Team{
         void remakePaths(Tank tank1, Tank tank2){
             ArrayList<int[]> path1 = tank1.logic.pathToTarget;
             ArrayList<int[]> path2 = tank2.logic.pathToTarget;
+
+            if(!tank2.logic.hasTarget && path1.size() > 2){
+                // Tank 1 above tank 2
+                if(tank1.y > tank2.y){
+                    // Tank 1 going down
+                    if(path1.get(0)[1] > tank1.y){
+                        // Tank 1 going down
+                        if(path1.get(1)[1] > path1.get(0)[1]){
+                            path1.remove(0);
+                            path1.remove(0);
+                            if(tank2.x < 8){
+                                path1.add(0, new int[]{tank1.x + 1, tank1.y});
+                                path1.add(1, new int[]{tank1.x + 1, tank1.y + 1});
+                                path1.add(2, new int[]{tank1.x + 1, tank1.y + 2});
+                                path1.add(3, new int[]{tank1.x, tank1.y + 2});
+                            }else{
+                                path1.add(0, new int[]{tank1.x - 1, tank1.y});
+                                path1.add(1, new int[]{tank1.x - 1, tank1.y + 1});
+                                path1.add(2, new int[]{tank1.x - 1, tank1.y + 2});
+                                path1.add(3, new int[]{tank1.x, tank1.y + 2});
+                            }
+                        // Tank 1 going right
+                        }else if(path1.get(1)[0] > path1.get(0)[0]){
+                            path1.remove(0);
+                            path1.remove(0);
+                            path1.add(0, new int[]{tank1.x + 1, tank1.y});
+                            path2.add(1, new int[]{tank1.x + 1, tank1.y + 1});
+                        // Tank 1 going left
+                        }else{
+                            path1.remove(0);
+                            path1.remove(0);
+                            path1.add(0, new int[]{tank1.x - 1, tank1.y});
+                            path2.add(1, new int[]{tank1.x - 1, tank1.y + 1});
+                        }    
+                    }
+                // Tank 1 below tank 2
+                }else if(tank2.y > tank1.y){
+                    // Tank 1 going up
+                    if(path1.get(0)[1] < tank1.y){
+                        // Tank 1 going up
+                        if(path1.get(1)[1] < path1.get(0)[1]){
+                            path1.remove(0);
+                            path1.remove(0);
+                            if(tank2.x < 8){
+                                path1.add(0, new int[]{tank1.x + 1, tank1.y});
+                                path1.add(1, new int[]{tank1.x + 1, tank1.y - 1});
+                                path1.add(2, new int[]{tank1.x + 1, tank1.y - 2});
+                                path1.add(3, new int[]{tank1.x, tank1.y - 2});
+                            }else{
+                                path1.add(0, new int[]{tank1.x - 1, tank1.y});
+                                path1.add(1, new int[]{tank1.x - 1, tank1.y - 1});
+                                path1.add(2, new int[]{tank1.x - 1, tank1.y - 2});
+                                path1.add(3, new int[]{tank1.x, tank1.y - 2});
+                            }
+                        // Tank 1 going right
+                        }else if(path1.get(1)[0] > path1.get(0)[0]){
+                            path1.remove(0);
+                            path1.remove(0);
+                            path1.add(0, new int[]{tank1.x + 1, tank1.y});
+                            path2.add(1, new int[]{tank1.x + 1, tank1.y - 1});
+                        // Tank 1 going left
+                        }else{
+                            path1.remove(0);
+                            path1.remove(0);
+                            path1.add(0, new int[]{tank1.x - 1, tank1.y});
+                            path2.add(1, new int[]{tank1.x - 1, tank1.y - 1});
+                        }    
+                    }
+                }else if(tank1.x < tank2.x){
+
+                }else if(tank1.x > tank2.x){
+
+                }
+            }
+            if(tank1.y > tank2.y){
+                // Tank 1 above tank 2 and going down next
+                if(path1.get(0)[1] > tank1.y){
+                    if(path1.get(1)[1] > path1.get(0)[1]){
+                        if(path2.get(0)[1] < tank2.y){
+                            if(tank2.x < 8){
+                                path2.add(0, new int[]{tank2.x + 1, tank2.y});
+                                path2.add(1, new int[]{tank2.x + 1, tank2.y});
+                                path2.add(2, new int[]{tank2.x, tank2.y});
+                            }else{
+                                path2.add(0, new int[]{tank2.x - 1, tank2.y});
+                                path2.add(1, new int[]{tank2.x - 1, tank2.y});
+                                path2.add(2, new int[]{tank2.x, tank2.y});
+                            }
+                        }else{
+                            return;
+                        }
+                    }else{
+
+                    }
+                }
+            }else if(tank2.y > tank1.y){
+
+            }else if(tank1.x < tank2.x){
+
+            }else if(tank1.x > tank2.x){
+
+            }
 
             if(path1.get(0)[0] == tank2.x
             && path1.get(0)[1] == tank2.y){
