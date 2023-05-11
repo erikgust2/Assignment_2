@@ -23,6 +23,7 @@ class Tank {
 
     // Team of the tank (PACT or NATO)
     Team team;
+    int id;
 
     // Instance of the logic class which is used for the AI
     TankLogic logic;
@@ -31,12 +32,13 @@ class Tank {
     boolean userControl;
 
     // Constructor for the tank class
-    Tank(int x, int y, Team team) {
+    Tank(int x, int y, int id, Team team) {
         this.x = x;
         this.y = y;
         this.xHome = x;
         this.yHome = y;
         this.team = team;
+        this.id = id;
 
         xCoord = x * 50;
         yCoord = y * 50;

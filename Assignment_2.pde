@@ -30,6 +30,8 @@ Tree tree1;
 Tree tree2;
 Tree tree3;
 
+Tree[] trees = new Tree[3];
+
 Tank[] tanks = new Tank[6];
 
 Timer timer;
@@ -62,6 +64,10 @@ void setup() {
     tree1 = new Tree(5, 12);
     tree2 = new Tree(6, 5);
     tree3 = new Tree(11, 10);
+
+    trees[0] = tree1;
+    trees[1] = tree2;
+    trees[2] = tree3;
 
     setGameBoard();
     tanks[0].logic.addFrontierNodes(tanks[0].x, tanks[0].y);

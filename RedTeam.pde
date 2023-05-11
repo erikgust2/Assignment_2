@@ -1,9 +1,9 @@
 class RedTeam extends Team{
     RedTeam(color _color, int[] _homebase){
         super(_color, _homebase);
-        this.tanks[0] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
-        this.tanks[1] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
-        this.tanks[2] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
+        this.tanks[0] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 1, 0, this);
+        this.tanks[1] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 3, 1, this);
+        this.tanks[2] = new RedTank(this.homebase[0] + 1, this.homebase[1] + 5, 2, this);
     }
 
     void updateLogic(){
@@ -11,15 +11,15 @@ class RedTeam extends Team{
     }
 
     class RedTank extends Tank{
-        RedTank(int _x, int _y, Team _team){
-            super(_x, _y, _team);
+        RedTank(int _x, int _y, int _id, Team _team){
+            super(_x, _y, _id, _team);
             this.logic = new RedLogic(this);
         }
     }
 
     class DummyTank extends Tank{
-        DummyTank(int _x, int _y, Team _team){
-            super(_x, _y, _team);
+        DummyTank(int _x, int _y, int _id, Team _team){
+            super(_x, _y, _id, _team);
         }
     }
 

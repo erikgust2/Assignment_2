@@ -59,8 +59,8 @@ class TankLogic extends Logic {
                 if(nx >= 0 && nx < 16 && ny >= 0 && ny < 16) {
                     Node nodeToAdd = new Node(nx, ny);
                     nodeToAdd.obstacle = false;
-                    if(gameBoard[nx][ny].type == CellType.TREE){
-                        nodeToAdd.type = CellType.TREE;
+                    nodeToAdd.type = gameBoard[nx][ny].type;
+                    if(nodeToAdd.type == CellType.TREE){
                         nodeToAdd.obstacle = true;
                     }
                     for(Tank t : tanks){
