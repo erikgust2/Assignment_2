@@ -47,7 +47,7 @@ class TeamLogic extends Logic {
             tank.logic.updateMap(knownWorld, frontier);
         }
 
-        System.out.println("Frontier size: " + frontier.size());
+        //System.out.println("Frontier size: " + frontier.size());
 
         assignTargets();
     }
@@ -61,11 +61,15 @@ class TeamLogic extends Logic {
     }
 
     void performAuction(Node target) {
-        System.out.println("Auction started");
+        //System.out.println("Auction started");
         Tank bestBidder = null;
         int bestBid = 100000;
 
         for(Tank tank : team.tanks) {
+            if(tank instanceof BlueTeam.DummyTank
+            || tank instanceof RedTeam.DummyTank){
+                continue;
+            }
             int currentBid = tank.logic.getBid(target);
             //System.out.println("Tank bidded " + currentBid);
             if(currentBid < bestBid) {

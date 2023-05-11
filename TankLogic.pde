@@ -36,7 +36,6 @@ class TankLogic extends Logic {
 
     void updateMap(KnownWorld map, ArrayList<Node> frontier) {
         knownWorld = map;
-        for(Node node : frontier)
         for(Node target : targets) {
             target = knownWorld.nodes[target.x][target.y];
         }

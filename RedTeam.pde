@@ -17,6 +17,12 @@ class RedTeam extends Team{
         }
     }
 
+    class DummyTank extends Tank{
+        DummyTank(int _x, int _y, Team _team){
+            super(_x, _y, _team);
+        }
+    }
+
     class RedLogic extends TankLogic{
 
         RedLogic(Tank tank){

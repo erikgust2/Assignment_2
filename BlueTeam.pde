@@ -4,12 +4,12 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, this);
-        this.tanks[1] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
+        this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, this);
     }
 
     void updateLogic(){
-        System.out.println("Blue Team Logic");
+        //System.out.println("Blue Team Logic");
         super.updateLogic();
         this.teamLogic.update(); 
     }
@@ -33,6 +33,12 @@ class BlueTeam extends Team{
         }
     }
 
+    class DummyTank extends Tank{
+        DummyTank(int _x, int _y, Team _team){
+            super(_x, _y, _team);
+        }
+    }
+    /*
     class BlueScoutTank extends Tank{
         BlueScoutTank(int _x, int _y, Team _team){
             super(_x, _y, _team);
@@ -81,7 +87,7 @@ class BlueTeam extends Team{
                 //teamLogic.addFrontierNodes(this.x, this.y);
             }
         }
-    }
+    }*/
 
     class BlueLogic extends TankLogic{
 
@@ -90,8 +96,10 @@ class BlueTeam extends Team{
         }
 
         void update(){
-            System.out.println("Blue Tank Logic");
+            //System.out.println("Blue Tank Logic");
             super.update();
+
+            // State checks and changes
             if(this.stateMachine.currentState == tankRetreatState){
                 if(this.pathToTarget.size() == 0){
                     this.hasPath = false;
@@ -102,9 +110,11 @@ class BlueTeam extends Team{
                 if(timer.getElapsedTime() >= this.logicTimer){
                     this.stateMachine.changeState(tankWanderState);
                 }
-            }else if(this.stateMachine.currentState == tankWanderState){
+            }else if(this.stateMachine.currentState == tankWaitingState){
                 if(this.logicTimer >= timer.getElapsedTime()){
                     return;
+                }else{
+                    this.stateMachine.changeState(tankWanderState);
                 }
             }
 
@@ -112,7 +122,9 @@ class BlueTeam extends Team{
 
             if(this.hasPath && this.hasTarget){
 
-                if(this.knownWorld.nodes[target.x][target.y].obstacle) {
+                // Target is obstacle check
+                if(target.obstacle && this.pathToTarget.size() < 2) {
+                    println("Obstacle at target!");
                     this.hasTarget = false;
                     this.hasPath = false;
                     return;
@@ -120,24 +132,33 @@ class BlueTeam extends Team{
 
                 int[] node = this.pathToTarget.get(0);
 
+                // Arrived at node check
                 if(node[0] == this.tank.x
                 && node[1] == this.tank.y){
                     this.pathToTarget.remove(node);
                 }
+                // Collision check
                 if(knownWorld.nodes[node[0]][node[1]].obstacle){
+                    println("Obstacle on the way to target!");
+                    println(pathToTarget.size() + " moves to target. Recalculating...");
                     ArrayList<int[]> newPath = findPath(new Node(this.tank.x, this.tank.y), target);
-                    pathToTarget.remove(0);
+                    this.pathToTarget.remove(0);
                     for(int i = 0; i < newPath.size(); i++){
-                        pathToTarget.add(0, newPath.get(i));
+                        this.pathToTarget.add(0, newPath.get(i));
                     }
+                    println(pathToTarget.size() + " moves to target.");
                     for(Tank t: this.tank.team.tanks){
-                        if(t.x == node[0]
+                        if(t != this.tank
+                        && t.x == node[0]
                         && t.y == node[1]){
-                            t.logic.logicTimer = timer.setNewTimer(100);
+                            t.logic.stateMachine.changeState(tankWaitingState);
+                            println("Tank " + this.tank.x + "," + this.tank.y + " told Tank " + t.x + "," + t.y + " to sleep");
                         }
                     }
                     return;
                 }
+
+                // Movement
                 if(node[0] < this.tank.x){
                     this.tank.moveLeft();
                 }else if(node[0] > this.tank.x){
@@ -150,7 +171,7 @@ class BlueTeam extends Team{
             }
         }
     }
-
+    /*
     class BlueScoutLogic extends BlueLogic{
 
         BlueScoutLogic(Tank tank){
@@ -215,5 +236,5 @@ class BlueTeam extends Team{
             hasTarget = false;
             return null;
         }
-    }
+    }*/
 }

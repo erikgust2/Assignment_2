@@ -123,6 +123,25 @@ class ReportState extends State{
 }
 
 // State representing the tank having no actions to take
+class WaitingState extends State{
+
+    String name = "WaitingState";
+
+    void onEnter(TankLogic logic){
+        println("WaitingState onEnter");
+        logic.logicTimer = timer.setNewTimer(100);
+    }
+
+    void onExit(TankLogic logic){
+        println("WaitingState onExit");
+    }
+
+    void execute(TankLogic logic){
+
+    }
+}
+
+// State representing the tank having no actions to take
 class IdleState extends State{
 
     String name = "IdleState";
@@ -178,6 +197,7 @@ class ScoutWanderState extends State {
 // Instances of the different tank states for use in the state machine
 WanderState tankWanderState = new WanderState();
 RetreatState tankRetreatState = new RetreatState();
+WaitingState tankWaitingState = new WaitingState();
 IdleState tankIdleState = new IdleState();
 ReportState tankReportState = new ReportState();
 ScoutWanderState scoutTankWanderState = new ScoutWanderState();
