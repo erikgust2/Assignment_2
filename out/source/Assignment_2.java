@@ -419,12 +419,12 @@ class BlueTeam extends Team{
                 }else if(tank1.x > tank2.x){
 
                 }
-            }
-            error += "[tank2 has target]";
             // Tank 1 above tank 2
-            if(tank1.y > tank2.y){
+            } else if(tank1.y > tank2.y){
+                error += "[tank2 has target]";
                 error += "[tank1 above tank2]";
                 // Tank 1 going down
+                println(path1.get(0)[1] + "?" + tank1.y);
                 if(path1.get(0)[1] > tank1.y){
                     error += "[tank1 going down]";
                     // Tank 1 going down
@@ -487,6 +487,7 @@ class BlueTeam extends Team{
                 }
             // Tank 1 below tank 2
             }else if(tank2.y > tank1.y){
+                error += "[tank2 has target]";
                 error += "[tank1 below tank2]";
                 // Tank 1 going up
                 if(path1.get(0)[1] < tank1.y){
@@ -550,8 +551,10 @@ class BlueTeam extends Team{
                     }
                 }
             }else if(tank1.x < tank2.x){
+                error += "[tank2 has target]";
                 error += "[tank1 left of tank2]";
             }else if(tank1.x > tank2.x){
+                error += "[tank2 has target]";
                 error += "[tank1 right of tank2]";
             }
             println(error);
@@ -778,6 +781,11 @@ class KnownWorld {
         if(node != null && nodes[node.x][node.y] == null) {
             nodes[node.x][node.y] = node;
             nodes[node.x][node.y].explored = true;
+        }else{
+            nodes[node.x][node.y].obstacle = node.obstacle;
+            nodes[node.x][node.y].type = node.type;
+            nodes[node.x][node.y].explored = node.explored;
+            nodes[node.x][node.y].visited = node.visited;
         }
     }
 
@@ -943,6 +951,9 @@ class Node {
             
             ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
         }
+        textSize(12);
+        fill(0);
+        text(x + "," + y, x * cellSize, y * cellSize + 12);
     }
 }
 class RedTeam extends Team{
@@ -1355,6 +1366,9 @@ class Tank {
         ellipse(xCoord+25, yCoord+25, 50, 50);
         strokeWeight(3);
         line(xCoord + 25, yCoord + 25, xCoord + 25 + cos(radians(this.rotation)) * 25, yCoord + 25 + sin(radians(this.rotation)) * 25);
+        textSize(25);
+        fill(255);
+        text(this.id, xCoord+25, yCoord+25);
     }
     
 }
@@ -1387,6 +1401,7 @@ class TankLogic extends Logic {
             target = getTarget();
         }
         hasTarget = true;
+        println("Tank [" + this.tank.id + "] heading towards [" + target.x + "," + target.y +"]");
         return target;
     }
 
@@ -1726,13 +1741,14 @@ class TeamLogic extends Logic {
                 if(Math.random() < 0.5f) {
                     bestBidder = tank;
                 }
+                bestBidder = this.team.tanks[0];
             }
         }
 
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
             this.assignedTargets.add(target);
-            System.out.println("Tank[" + bestBidder.x + "," + bestBidder.y + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
+            System.out.println("Tank[" + bestBidder.id + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
         }
     }
 

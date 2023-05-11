@@ -80,5 +80,8 @@ class Node {
             
             ellipse(x * cellSize + cellSize / 2, y * cellSize + cellSize / 2, cellSize / 2, cellSize / 2);
         }
+        textSize(12);
+        fill(0);
+        text(x + "," + y, x * cellSize, y * cellSize + 12);
     }
 }

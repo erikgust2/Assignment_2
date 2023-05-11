@@ -266,12 +266,12 @@ class BlueTeam extends Team{
                 }else if(tank1.x > tank2.x){
 
                 }
-            }
-            error += "[tank2 has target]";
             // Tank 1 above tank 2
-            if(tank1.y > tank2.y){
+            } else if(tank1.y > tank2.y){
+                error += "[tank2 has target]";
                 error += "[tank1 above tank2]";
                 // Tank 1 going down
+                println(path1.get(0)[1] + "?" + tank1.y);
                 if(path1.get(0)[1] > tank1.y){
                     error += "[tank1 going down]";
                     // Tank 1 going down
@@ -334,6 +334,7 @@ class BlueTeam extends Team{
                 }
             // Tank 1 below tank 2
             }else if(tank2.y > tank1.y){
+                error += "[tank2 has target]";
                 error += "[tank1 below tank2]";
                 // Tank 1 going up
                 if(path1.get(0)[1] < tank1.y){
@@ -397,8 +398,10 @@ class BlueTeam extends Team{
                     }
                 }
             }else if(tank1.x < tank2.x){
+                error += "[tank2 has target]";
                 error += "[tank1 left of tank2]";
             }else if(tank1.x > tank2.x){
+                error += "[tank2 has target]";
                 error += "[tank1 right of tank2]";
             }
             println(error);

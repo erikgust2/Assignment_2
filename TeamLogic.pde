@@ -85,13 +85,14 @@ class TeamLogic extends Logic {
                 if(Math.random() < 0.5) {
                     bestBidder = tank;
                 }
+                bestBidder = this.team.tanks[0];
             }
         }
 
         if(bestBidder != null) {
             bestBidder.logic.addTarget(target);
             this.assignedTargets.add(target);
-            System.out.println("Tank[" + bestBidder.x + "," + bestBidder.y + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
+            System.out.println("Tank[" + bestBidder.id + "] won auction for " + target.x + ", " + target.y + " with a bid of " + bestBid);
         }
     }
 

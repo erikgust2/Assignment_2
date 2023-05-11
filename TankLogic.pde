@@ -27,6 +27,7 @@ class TankLogic extends Logic {
             target = getTarget();
         }
         hasTarget = true;
+        println("Tank [" + this.tank.id + "] heading towards [" + target.x + "," + target.y +"]");
         return target;
     }
 

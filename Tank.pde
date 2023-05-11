@@ -139,6 +139,9 @@ class Tank {
         ellipse(xCoord+25, yCoord+25, 50, 50);
         strokeWeight(3);
         line(xCoord + 25, yCoord + 25, xCoord + 25 + cos(radians(this.rotation)) * 25, yCoord + 25 + sin(radians(this.rotation)) * 25);
+        textSize(25);
+        fill(255);
+        text(this.id, xCoord+25, yCoord+25);
     }
     
 }

@@ -45,6 +45,11 @@ class KnownWorld {
         if(node != null && nodes[node.x][node.y] == null) {
             nodes[node.x][node.y] = node;
             nodes[node.x][node.y].explored = true;
+        }else{
+            nodes[node.x][node.y].obstacle = node.obstacle;
+            nodes[node.x][node.y].type = node.type;
+            nodes[node.x][node.y].explored = node.explored;
+            nodes[node.x][node.y].visited = node.visited;
         }
     }
 
