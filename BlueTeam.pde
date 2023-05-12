@@ -1,5 +1,21 @@
+/* 
+ * Authors:
+ * - Erik Gustafsson
+ * - August Hafvenström
+ * - Petter Signell
+ */
+
+/*
+ * This file contains all unique logic for the blue team.
+ * These classes extend their generic counterparts.
+ */
+
+/*
+ * This class contains all the logic for the team as well as its AI.
+ */
 class BlueTeam extends Team{
 
+    // Constructor
     BlueTeam(color _color, int[] _homebase){
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
@@ -9,18 +25,21 @@ class BlueTeam extends Team{
         init();
     }
 
+    // Runs every frame
     void updateLogic(){
         //System.out.println("Blue Team Logic");
         super.updateLogic();
         this.teamLogic.update(); 
     }
 
+    // Runs on startup to initialize the state of the tanks' starting nodes
     void init(){
         for(Tank t: this.tanks){
             teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
         }
     }
 
+    // Extends the generic tank class to add team specific logic
     class BlueTank extends Tank{
         BlueTank(int _x, int _y, int _id, Team _team){
             super(_x, _y, _id, _team);
@@ -29,6 +48,7 @@ class BlueTeam extends Team{
         }
     }
 
+    // A dummy version to act as a static obstacle
     class DummyTank extends Tank{
         DummyTank(int _x, int _y, int _id, Team _team){
             super(_x, _y, _id, _team);
@@ -85,12 +105,16 @@ class BlueTeam extends Team{
         }
     }*/
 
+    // Extends the generic tank logic class to add team specific logic
+    // Since the blue team is the only active team, there is no red counterpart.
     class BlueLogic extends TankLogic{
 
+        // Constructor
         BlueLogic(Tank tank){
             super(tank);
         }
 
+        // Runs every frame
         void update(){
             //System.out.println("Blue Tank Logic");
             super.update();
@@ -166,6 +190,8 @@ class BlueTeam extends Team{
             }
         }
 
+        // Triggers if the path is blocked by another tank for them to try to navigate around each other.
+        // Sadly does not work as intended.
         void remakePaths(Tank tank1, Tank tank2){
             ArrayList<int[]> path1 = tank1.logic.pathToTarget;
             ArrayList<int[]> path2 = tank2.logic.pathToTarget;

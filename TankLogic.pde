@@ -1,3 +1,14 @@
+/* 
+ * Authors:
+ * - Erik Gustafsson
+ * - August Hafvenström
+ * - Petter Signell
+ */
+
+/*
+ * This class extends the generic logic class with tank specific logic.
+ */
+
 class TankLogic extends Logic {
 
     // The tank that this logic is controlling.
@@ -16,7 +27,6 @@ class TankLogic extends Logic {
     }
   
     // Finds the next target node.
-    // Implicitly targets in a breadth-first manner.
     Node getTarget() {
         if(targets.size() == 0){
             hasTarget = false;
@@ -31,10 +41,13 @@ class TankLogic extends Logic {
         return target;
     }
 
+    // Adds a new target node to the list of targets.
+    // Called by the team leader when a tank wins an auction.
     void addTarget(Node target){
         targets.add(target);
     }
 
+    // Updates the tank's map with the team leader's map.
     void updateMap(KnownWorld map, ArrayList<Node> frontier) {
         knownWorld = map;
         for(Node target : targets) {
@@ -50,6 +63,7 @@ class TankLogic extends Logic {
         }
     }
 
+    // Gets the contents of all surrounding nodes from the tank's current position.
     ArrayList<Node> getSurroundings() {
         ArrayList<Node> surroundings = new ArrayList<>();
         
@@ -233,6 +247,9 @@ class TankLogic extends Logic {
         }
     }
 
+    // Calculates a bid for an auction defined as the sum of all steps needed to reach the target nodes in sequence.
+    // The paths are determined using Dijkstra's algorithm.
+    // Called by the team leader during an auction.
     int getBid(Node target){
         int bid = 0;
         int i = 0;
