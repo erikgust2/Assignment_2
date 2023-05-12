@@ -108,7 +108,9 @@ class Tank {
             return true;
         }
 
-        Node targetNode = gameBoard[targetX][targetY];
+        return false;
+
+        /* Node targetNode = gameBoard[targetX][targetY];
         if(targetNode.type == CellType.TREE) {
             logic.knownWorld.nodes[targetX][targetY].type = CellType.TREE;
             logic.knownWorld.nodes[targetX][targetY].obstacle = true;
@@ -126,7 +128,7 @@ class Tank {
             }
         }
 
-        return false;
+        return false; */
     }
 
     // Draw the tank on the screen each frame

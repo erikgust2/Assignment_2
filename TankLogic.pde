@@ -172,7 +172,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         ArrayList<int[]> dijkstra(Node src, Node target){
-            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -183,23 +183,8 @@ class TankLogic extends Logic {
             }
             dist[src.y * size + src.x] = 0;
 
-            int[][] dxdy = {{-1,0},{0,-1},{1,0},{0,1}};
-            int r1, r2, r3, r4;
-            r1 = int(random(0,4));
-            r2 = r1;
-            r3 = r1;
-            r4 = r1;
-            while(r2 == r1){
-                r2 = int(random(0,4));
-            }
-            while(r3 == r1){
-                r3 = int(random(0,4));
-            }
-            while(r4 == r1){
-                r4 = int(random(0,4));
-            }
-            int[] dx = {dxdy[r1][0],dxdy[r2][0],dxdy[r3][0],dxdy[r4][0]}; 
-            int[] dy = {dxdy[r1][1],dxdy[r2][1],dxdy[r3][1],dxdy[r4][1]};
+            int[] dx = {-1,0,1,0}; 
+            int[] dy = {0,-1,0,1};
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
@@ -244,8 +229,15 @@ class TankLogic extends Logic {
                 current = predecessor[current];
             }
 
+            //println("From [" + path.get(0)[0] + ", " + path.get(0)[1] + "] To [" + path.get(path.size() - 1)[0] + ", " + path.get(path.size() - 1)[1] + "]. Length: " + path.size());
             for(int i = 0; i < path.size(); i++){
+                if(i == 0){
+                    //println("From [" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                }
                 //println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                if(i == path.size() - 1){
+                    //println("To [" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                }
             }
 
             return path;
@@ -258,19 +250,19 @@ class TankLogic extends Logic {
     int getBid(Node target){
         int bid = 0;
         int i = 0;
-        int previousx = tank.x;
-        int previousy = tank.y;
+        int previousx = this.tank.x;
+        int previousy = this.tank.y;
         ArrayList<int[]> list;
   
         while( i < targets.size()){
-            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
-            bid += list.size();
+            list = findPath(this.knownWorld.nodes[previousx][previousy], this.knownWorld.nodes[targets.get(i).x][targets.get(i).y]);
+            bid += list.size() - 1;
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size();
+        bid += list.size() - 1;
         return bid;
     }
 

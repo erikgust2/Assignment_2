@@ -76,6 +76,7 @@ void setup() {
 
 void draw() {
     timer.tick();
+    
     if(tanks[0].logic.stateMachine.currentState != tankRetreatState
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
@@ -87,6 +88,8 @@ void draw() {
 
     background(255);
 
+    drawGrid();
+    
     redTeam.updateLogic();
     blueTeam.updateLogic();
     
@@ -101,7 +104,7 @@ void draw() {
     tree2.draw();
     tree3.draw();
 
-    drawGrid();
+    
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
     blueTeam.teamLogic.knownWorld.draw();

@@ -54,17 +54,13 @@ class TeamLogic extends Logic {
     void update() {
 
         // Updates the map with the surroundings of all tanks
-        for(Tank tank : team.tanks) {
+        for(Tank tank : this.team.tanks) {
             if(tank == null){
                 continue;
             }
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-        }
-
-        // Adds new frontier nodes to be explored
-        for(Node node[] : knownWorld.nodes) {
-            for(Node n : node) {
+            for(Node n : tankView){
                 if(n != null && n.explored && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
@@ -107,7 +103,7 @@ class TeamLogic extends Logic {
      * amount of actions to reach the target) wins the auction and gets assigned the target.
      */
     void performAuction(Node target) {
-        //System.out.println("Auction started");
+        System.out.println("Auction started for Node [" + target.x + "," + target.y + "]");
         Tank bestBidder = null;
         int bestBid = 100000;
 

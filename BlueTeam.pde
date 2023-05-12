@@ -166,7 +166,7 @@ class BlueTeam extends Team{
                 node = this.pathToTarget.get(0);
 
                 // Collision check
-                for(Tank t: this.tank.team.tanks){
+                /* for(Tank t: this.tank.team.tanks){
                     if(t == null){
                         continue;
                     }
@@ -183,7 +183,7 @@ class BlueTeam extends Team{
                     && t.y == node[1]){
                         this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
-                }
+                } */
 
                 // Movement
                 if(node[0] < this.tank.x){

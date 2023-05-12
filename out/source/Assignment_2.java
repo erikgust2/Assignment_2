@@ -93,6 +93,7 @@ public void setup() {
 
 public void draw() {
     timer.tick();
+    
     if(tanks[0].logic.stateMachine.currentState != tankRetreatState
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
@@ -104,6 +105,8 @@ public void draw() {
 
     background(255);
 
+    drawGrid();
+    
     redTeam.updateLogic();
     blueTeam.updateLogic();
     
@@ -118,7 +121,7 @@ public void draw() {
     tree2.draw();
     tree3.draw();
 
-    drawGrid();
+    
     //tanks[0].logic.knownWorld.draw(pactColor);
     //tanks[3].logic.knownWorld.draw(natoColor);
     blueTeam.teamLogic.knownWorld.draw();
@@ -322,7 +325,7 @@ class BlueTeam extends Team{
                 node = this.pathToTarget.get(0);
 
                 // Collision check
-                for(Tank t: this.tank.team.tanks){
+                /* for(Tank t: this.tank.team.tanks){
                     if(t == null){
                         continue;
                     }
@@ -339,7 +342,7 @@ class BlueTeam extends Team{
                     && t.y == node[1]){
                         this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
-                }
+                } */
 
                 // Movement
                 if(node[0] < this.tank.x){
@@ -1366,7 +1369,9 @@ class Tank {
             return true;
         }
 
-        Node targetNode = gameBoard[targetX][targetY];
+        return false;
+
+        /* Node targetNode = gameBoard[targetX][targetY];
         if(targetNode.type == CellType.TREE) {
             logic.knownWorld.nodes[targetX][targetY].type = CellType.TREE;
             logic.knownWorld.nodes[targetX][targetY].obstacle = true;
@@ -1384,7 +1389,7 @@ class Tank {
             }
         }
 
-        return false;
+        return false; */
     }
 
     // Draw the tank on the screen each frame
@@ -1580,7 +1585,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         public ArrayList<int[]> dijkstra(Node src, Node target){
-            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -1591,23 +1596,8 @@ class TankLogic extends Logic {
             }
             dist[src.y * size + src.x] = 0;
 
-            int[][] dxdy = {{-1,0},{0,-1},{1,0},{0,1}};
-            int r1, r2, r3, r4;
-            r1 = PApplet.parseInt(random(0,4));
-            r2 = r1;
-            r3 = r1;
-            r4 = r1;
-            while(r2 == r1){
-                r2 = PApplet.parseInt(random(0,4));
-            }
-            while(r3 == r1){
-                r3 = PApplet.parseInt(random(0,4));
-            }
-            while(r4 == r1){
-                r4 = PApplet.parseInt(random(0,4));
-            }
-            int[] dx = {dxdy[r1][0],dxdy[r2][0],dxdy[r3][0],dxdy[r4][0]}; 
-            int[] dy = {dxdy[r1][1],dxdy[r2][1],dxdy[r3][1],dxdy[r4][1]};
+            int[] dx = {-1,0,1,0}; 
+            int[] dy = {0,-1,0,1};
 
             outerloop:
             for(int i = 0; i < size * size -1; i++){
@@ -1652,8 +1642,15 @@ class TankLogic extends Logic {
                 current = predecessor[current];
             }
 
+            //println("From [" + path.get(0)[0] + ", " + path.get(0)[1] + "] To [" + path.get(path.size() - 1)[0] + ", " + path.get(path.size() - 1)[1] + "]. Length: " + path.size());
             for(int i = 0; i < path.size(); i++){
+                if(i == 0){
+                    //println("From [" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                }
                 //println("[" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                if(i == path.size() - 1){
+                    //println("To [" + path.get(i)[0] + ", " + path.get(i)[1] + "]");
+                }
             }
 
             return path;
@@ -1666,19 +1663,19 @@ class TankLogic extends Logic {
     public int getBid(Node target){
         int bid = 0;
         int i = 0;
-        int previousx = tank.x;
-        int previousy = tank.y;
+        int previousx = this.tank.x;
+        int previousy = this.tank.y;
         ArrayList<int[]> list;
   
         while( i < targets.size()){
-            list = findPath(knownWorld.nodes[previousx][previousy], targets.get(i));
-            bid += list.size();
+            list = findPath(this.knownWorld.nodes[previousx][previousy], this.knownWorld.nodes[targets.get(i).x][targets.get(i).y]);
+            bid += list.size() - 1;
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size();
+        bid += list.size() - 1;
         return bid;
     }
 
@@ -1784,17 +1781,13 @@ class TeamLogic extends Logic {
     public void update() {
 
         // Updates the map with the surroundings of all tanks
-        for(Tank tank : team.tanks) {
+        for(Tank tank : this.team.tanks) {
             if(tank == null){
                 continue;
             }
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
-        }
-
-        // Adds new frontier nodes to be explored
-        for(Node node[] : knownWorld.nodes) {
-            for(Node n : node) {
+            for(Node n : tankView){
                 if(n != null && n.explored && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
@@ -1837,7 +1830,7 @@ class TeamLogic extends Logic {
      * amount of actions to reach the target) wins the auction and gets assigned the target.
      */
     public void performAuction(Node target) {
-        //System.out.println("Auction started");
+        System.out.println("Auction started for Node [" + target.x + "," + target.y + "]");
         Tank bestBidder = null;
         int bestBid = 100000;
 
