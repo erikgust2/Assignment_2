@@ -20,7 +20,7 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, 3, this);
-        //this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
+        this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, 5, this);
         init();
     }

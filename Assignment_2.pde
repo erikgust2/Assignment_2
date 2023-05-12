@@ -56,7 +56,7 @@ void setup() {
     tanks[1] = redTeam.tanks[1];
     tanks[2] = redTeam.tanks[2];
     tanks[3] = blueTeam.tanks[0];
-    //tanks[4] = blueTeam.tanks[1];
+    tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
     blueTeam.init();
@@ -80,10 +80,10 @@ void draw() {
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
     } else {
-        //delay(1000);
+        //delay(50);
     }
     
-    delay(50);
+    delay(300);
 
     background(255);
 

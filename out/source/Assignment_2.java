@@ -73,7 +73,7 @@ public void setup() {
     tanks[1] = redTeam.tanks[1];
     tanks[2] = redTeam.tanks[2];
     tanks[3] = blueTeam.tanks[0];
-    //tanks[4] = blueTeam.tanks[1];
+    tanks[4] = blueTeam.tanks[1];
     tanks[5] = blueTeam.tanks[2];
 
     blueTeam.init();
@@ -97,10 +97,10 @@ public void draw() {
     || tanks[3].logic.stateMachine.currentState != tankRetreatState){
         
     } else {
-        //delay(1000);
+        //delay(50);
     }
     
-    delay(50);
+    delay(300);
 
     background(255);
 
@@ -176,7 +176,7 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, 3, this);
-        //this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
+        this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, 5, this);
         init();
     }
