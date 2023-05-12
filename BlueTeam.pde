@@ -20,7 +20,7 @@ class BlueTeam extends Team{
         super(_color, _homebase);
         this.teamLogic = new TeamLogic(this);
         this.tanks[0] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 1, 3, this);
-        this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
+        //this.tanks[1] = new DummyTank(this.homebase[0] + 1, this.homebase[1] + 3, 4, this);
         this.tanks[2] = new BlueTank(this.homebase[0] + 1, this.homebase[1] + 5, 5, this);
         init();
     }
@@ -35,7 +35,9 @@ class BlueTeam extends Team{
     // Runs on startup to initialize the state of the tanks' starting nodes
     void init(){
         for(Tank t: this.tanks){
-            teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+            if(t != null){
+                teamLogic.knownWorld.nodes[t.x][t.y].obstacle = true;
+            }
         }
     }
 
@@ -161,19 +163,23 @@ class BlueTeam extends Team{
                     return;
                 }
 
+                node = this.pathToTarget.get(0);
+
                 // Collision check
                 for(Tank t: this.tank.team.tanks){
+                    if(t == null){
+                        continue;
+                    }
                     if(t.id != this.tank.id
                     && t.x == node[0]
                     && t.y == node[1]){
-                        remakePaths(this.tank, t);
+                        this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
                 }
                 for(Tree t: trees){
                     if(t.x == node[0]
                     && t.y == node[1]){
-                        this.hasPath = false;
-                        this.hasTarget = false;
+                        this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
                     }
                 }
 

@@ -116,6 +116,9 @@ class Tank {
         }
 
         for(Tank tank : tanks) {
+            if(tank == null){
+                continue;
+            }
             if(tank.x == targetX && tank.y == targetY) {
                 logic.knownWorld.nodes[targetX][targetY].type = CellType.TANK;
                 logic.knownWorld.nodes[targetX][targetY].obstacle = true;

@@ -33,6 +33,7 @@ class TeamLogic extends Logic {
             for(int i = 0; i <= 3; i++) {
                 for(int j = 0; j <= 6; j++) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -41,6 +42,7 @@ class TeamLogic extends Logic {
             for(int i = 15; i >= 12; i--) {
                 for(int j = 15; j >= 8; j--) {
                     Node node = new Node(i, j);
+                    node.explored = true;
                     knownWorld.addNode(node);
                     frontier.add(node);
                 }
@@ -53,6 +55,9 @@ class TeamLogic extends Logic {
 
         // Updates the map with the surroundings of all tanks
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             ArrayList<Node> tankView = tank.logic.getSurroundings();
             this.knownWorld.update(tankView);
         }
@@ -60,7 +65,7 @@ class TeamLogic extends Logic {
         // Adds new frontier nodes to be explored
         for(Node node[] : knownWorld.nodes) {
             for(Node n : node) {
-                if(n != null && !n.visited && !frontier.contains(n)) {
+                if(n != null && n.explored && !n.visited && !frontier.contains(n)) {
                     frontier.add(n);
                 }
             }
@@ -68,6 +73,9 @@ class TeamLogic extends Logic {
 
         // Updates the maps of the subservient tanks with the map of the leader
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             tank.logic.updateMap(knownWorld, frontier);
         }
 
@@ -105,6 +113,9 @@ class TeamLogic extends Logic {
 
         // Goes through all tanks (ignoring dummies) and gets their bids for the target node
         for(Tank tank : team.tanks) {
+            if(tank == null){
+                continue;
+            }
             if(tank instanceof BlueTeam.DummyTank
             || tank instanceof RedTeam.DummyTank){
                 continue;

@@ -29,7 +29,9 @@ class Team{
     // Runs every frame
     void updateLogic(){
         for(Tank t: this.tanks){
-            t.update();
+            if(t != null){
+                t.update();
+            }
         }
     }
 
