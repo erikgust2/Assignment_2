@@ -1585,7 +1585,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         public ArrayList<int[]> dijkstra(Node src, Node target){
-            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -1669,13 +1669,13 @@ class TankLogic extends Logic {
   
         while( i < targets.size()){
             list = findPath(this.knownWorld.nodes[previousx][previousy], this.knownWorld.nodes[targets.get(i).x][targets.get(i).y]);
-            bid += list.size() - 1;
+            bid += list.size();
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size() - 1;
+        bid += list.size();
         return bid;
     }
 
@@ -1846,7 +1846,7 @@ class TeamLogic extends Logic {
 
             // Gets the bid for the target node by prompting the tank to calculate it.
             int currentBid = tank.logic.getBid(target);
-            //System.out.println("Tank bidded " + currentBid);
+            System.out.println("Tank " + tank.id + " bidded " + currentBid);
 
             // If the bid is lower than the current best bid, the tank becomes the new best bidder.
             if(currentBid < bestBid) {

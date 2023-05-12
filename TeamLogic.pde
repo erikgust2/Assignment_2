@@ -119,7 +119,7 @@ class TeamLogic extends Logic {
 
             // Gets the bid for the target node by prompting the tank to calculate it.
             int currentBid = tank.logic.getBid(target);
-            //System.out.println("Tank bidded " + currentBid);
+            System.out.println("Tank " + tank.id + " bidded " + currentBid);
 
             // If the bid is lower than the current best bid, the tank becomes the new best bidder.
             if(currentBid < bestBid) {

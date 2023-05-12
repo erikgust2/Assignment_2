@@ -172,7 +172,7 @@ class TankLogic extends Logic {
         // Finds the path from the source node to the target node.
         // Uses Dijkstra's algorithm.
         ArrayList<int[]> dijkstra(Node src, Node target){
-            println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
+            //println("From: [" + src.x + ", " + src.y + "] to [" + target.x + ", " + target.y + "]");
             int[] dist = new int[this.size * this.size];
             int[] predecessor = new int[this.size * this.size];
             boolean[] visited = new boolean[this.size * this.size];
@@ -256,13 +256,13 @@ class TankLogic extends Logic {
   
         while( i < targets.size()){
             list = findPath(this.knownWorld.nodes[previousx][previousy], this.knownWorld.nodes[targets.get(i).x][targets.get(i).y]);
-            bid += list.size() - 1;
+            bid += list.size();
             previousx = targets.get(i).x;
             previousy = targets.get(i).y;
             i++;
         }
         list = findPath(knownWorld.nodes[previousx][previousy], target);
-        bid += list.size() - 1;
+        bid += list.size();
         return bid;
     }
 
