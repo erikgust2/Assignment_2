@@ -1863,7 +1863,6 @@ class TeamLogic extends Logic {
                 if(Math.random() < 0.5f) {
                     bestBidder = tank;
                 }
-                //bestBidder = this.team.tanks[0];
             }
         }
 
