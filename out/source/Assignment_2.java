@@ -329,7 +329,9 @@ class BlueTeam extends Team{
                     if(t.id != this.tank.id
                     && t.x == node[0]
                     && t.y == node[1]){
+                        println("newPath");
                         this.pathToTarget = findPath(this.knownWorld.nodes[this.tank.x][this.tank.y], this.knownWorld.nodes[this.target.x][this.target.y]);
+                        remakePaths(this.tank, t);
                     }
                 }
                 for(Tree t: trees){
